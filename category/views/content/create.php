@@ -18,31 +18,43 @@ $id = isset($category['id']) ? "/".$category['id'] : '';
 </div>
 
 <div>
+        <?php $options = array(
+                1 => 'Yes',
+                0 => 'No'
+        ); ?>
+        
         <?php echo form_label('Is active', 'category_is_active'); ?> <span class="required">*</span>
-        <input id="category_is_active" type="text" name="category_is_active" maxlength="1" value="<?php echo set_value('category_is_active', isset($category['category_is_active']) ? $category['category_is_active'] : ''); ?>"  />
+        <?php echo form_dropdown('category_is_active', $options, set_value('category_is_active', isset($category['category_is_active']) ? $category['category_is_active'] : ''))?>
 </div>
 
-<div>
-        <?php echo form_label('Parent', 'category_parent_id'); ?>
-        <input id="category_parent_id" type="text" name="category_parent_id" maxlength="11" value="<?php echo set_value('category_parent_id', isset($category['category_parent_id']) ? $category['category_parent_id'] : ''); ?>"  />
-</div>
+<?php if( isset($categories) && !empty($categories) ):
+    $cats = array();
+    $cats['0'] = 'None';
+    
+    if(count($categories) > 0) {
+        foreach($categories as $cat):
+            $cats[$cat->id] = $cat->category_name;
+        endforeach;
+    }
+    
+    echo '<div>';
+    echo form_label('Parent', 'category_parent_id').'&nbsp;&nbsp;&nbsp;';
+    echo form_dropdown('category_parent_id', $cats, set_value('category_parent_id', isset($category['category_parent_id']) ? $category['category_parent_id'] : ''));
+    echo '</div>';
+
+endif;?>
 
 <div>
-        <?php echo form_label('Products count', 'category_products_count'); ?>
-        <input id="category_products_count" type="text" name="category_products_count" maxlength="11" value="<?php echo set_value('category_products_count', isset($category['category_products_count']) ? $category['category_products_count'] : ''); ?>"  />
-</div>
-
-<div>
-        <?php echo form_label('Meta title', 'category_meta_title'); ?>
+        <?php echo form_label('Meta title', 'category_meta_title'); ?> &nbsp;
         <input id="category_meta_title" type="text" name="category_meta_title" maxlength="250" value="<?php echo set_value('category_meta_title', isset($category['category_meta_title']) ? $category['category_meta_title'] : ''); ?>"  />
 </div>
 
 <div>
-        <?php echo form_label('Meta description', 'category_meta_description'); ?>
+        <?php echo form_label('Meta description', 'category_meta_description'); ?> &nbsp;
 	<?php echo form_textarea( array( 'name' => 'category_meta_description', 'id' => 'category_meta_description', 'rows' => '5', 'cols' => '80', 'value' => set_value('category_meta_description', isset($category['category_meta_description']) ? $category['category_meta_description'] : '') ) )?>
 </div>
 <div>
-        <?php echo form_label('Url', 'category_url'); ?>
+        <?php echo form_label('Url', 'category_url'); ?> &nbsp;
         <input id="category_url" type="text" name="category_url" maxlength="255" value="<?php echo set_value('category_url', isset($category['category_url']) ? $category['category_url'] : ''); ?>"  />
 </div>
 

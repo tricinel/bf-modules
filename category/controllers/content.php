@@ -60,6 +60,7 @@ class content extends Admin_Controller {
 	
 		Template::set('toolbar_title', lang('category_create_new_button'));
 		Template::set('toolbar_title', lang('category_create') . ' Category');
+		Template::set('categories', $this->category_model->find_all());
 		Template::render();
 	}
 	
@@ -101,6 +102,7 @@ class content extends Admin_Controller {
 	
 		Template::set('toolbar_title', lang('category_edit_heading'));
 		Template::set('toolbar_title', lang('category_edit') . ' Category');
+		Template::set('categories', $this->category_model->find_all());
 		Template::render();		
 	}
 	
@@ -158,10 +160,9 @@ class content extends Admin_Controller {
 					
 		$this->form_validation->set_rules('category_name','Name','required|trim|xss_clean|max_length[128]');			
 		$this->form_validation->set_rules('category_is_active','Is active','required|trim|xss_clean|is_numeric|max_length[1]');			
-		$this->form_validation->set_rules('category_parent_id','Parent','trim|xss_clean|max_length[11]');			
-		$this->form_validation->set_rules('category_products_count','Products count','trim|xss_clean|max_length[11]');			
-		$this->form_validation->set_rules('category_meta_title','Meta title','trim|xss_clean|max_length[250]');			
-		$this->form_validation->set_rules('category_meta_description','Meta description','trim|xss_clean');			
+		//$this->form_validation->set_rules('category_parent_id','Parent','trim|xss_clean|max_length[11]');			
+		$this->form_validation->set_rules('category_meta_title','Meta title','trim|xss_clean|max_length[250]');	
+		$this->form_validation->set_rules('category_meta_description','Meta description','trim|xss_clean');	
 		$this->form_validation->set_rules('category_url','Url','unique[bf_category.category_url,bf_category.id]|trim|xss_clean|max_length[255]');
 
 		if ($this->form_validation->run() === FALSE)
@@ -170,15 +171,18 @@ class content extends Admin_Controller {
 		}
 		
 		// make sure we only pass in the fields we want
+		$url                               = $this->input->post('category_url');
+		$category_name                     = $this->input->post('category_name');
+		$category_meta_title               = $this->input->post('category_meta_title');
 		
-		$data = array();
-		$data['category_name']        = $this->input->post('category_name');
+		$data                              = array();
+		$data['category_name']             = $category_name;
 		$data['category_is_active']        = $this->input->post('category_is_active');
+		$data['category_products_count']   = 0;
 		$data['category_parent_id']        = $this->input->post('category_parent_id');
-		$data['category_products_count']        = $this->input->post('category_products_count');
-		$data['category_meta_title']        = $this->input->post('category_meta_title');
-		$data['category_meta_description']        = $this->input->post('category_meta_description');
-		$data['category_url']        = $this->input->post('category_url');
+		$data['category_meta_title']       = (empty($category_meta_title)) ? $category_name : $category_meta_title;
+		$data['category_meta_description'] = $this->input->post('category_meta_description');
+		$data['category_url']              = (empty($url)) ? $this->sanitize_segment($category_name) : $this->sanitize_segment($url);
 		
 		if ($type == 'insert')
 		{
@@ -198,6 +202,29 @@ class content extends Admin_Controller {
 		}
 		
 		return $return;
+	}
+
+	//--------------------------------------------------------------------
+
+	/*
+		Method: sanitize_segment($segment)
+		
+		Creates a web-friendly version of a string by eliminating spaces and other characters
+		
+		Parameters:
+			$segment	- the string to be sanitized
+		
+		Returns:
+			A web-friendly string
+	*/
+
+	private function sanitize_segment($segment)
+	{
+		$chars = array(' ', '/', '&', '"', '(', ')', '#', ',', '.','----','---','--','\'');
+	    foreach($chars as $char){
+	       $segment = str_replace($char, "-", $segment);
+	    }
+    	return strtolower($segment);
 	}
 
 	//--------------------------------------------------------------------
