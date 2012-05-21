@@ -17,6 +17,8 @@ class content extends Admin_Controller {
 		Assets::add_css('jquery-ui-timepicker.css');
 		Assets::add_js('jquery-ui-timepicker-addon.js');
 		Assets::add_js(Template::theme_url('js/editors/ckeditor/ckeditor.js'));
+		Assets::add_module_js('product', 'ajaxfileupload.js');
+		Assets::add_module_js('product', 'uploader.main.js');
 	}
 	
 	//--------------------------------------------------------------------
@@ -137,8 +139,42 @@ class content extends Admin_Controller {
 		
 		redirect(SITE_AREA .'/content/product');
 	}
-	
+
 	//--------------------------------------------------------------------
+
+	/*
+		Method: upload_image($field_name)
+		
+		Allows user to upload images via the form.
+
+		Parameters:
+			$field_name	- name of input field
+	*/
+	public function upload_image()
+	{	
+		$config['upload_path'] = './media/catalog/';
+		$config['allowed_types'] = 'gif|jpg|jpeg|png';
+		$config['encrypt_name'] = true;
+
+		$this->load->library('upload', $config);
+
+		// $data = $_POST['userfile'];
+
+		// $this->output->set_content_type('application/json')->set_output(json_encode($data));
+
+		if ( ! $this->upload->do_upload('userfile'))
+		{
+			$error = array('error' => $this->upload->display_errors());
+
+			$this->output->set_content_type('application/json')->set_output(json_encode($error));
+		}
+		else
+		{
+			$data = array('upload_data' => $this->upload->data());
+
+			$this->output->set_content_type('application/json')->set_output(json_encode($data));
+		}
+	}
 
 	//--------------------------------------------------------------------
 	// !PRIVATE METHODS
