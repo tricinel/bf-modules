@@ -1,50 +1,54 @@
-<div class="box create rounded">
-
-	<a class="button good" href="<?php echo site_url(SITE_AREA .'/content/category/create'); ?>">
-		<?php echo lang('category_create_new_button'); ?>
-	</a>
-
-	<h3><?php echo lang('category_create_new'); ?></h3>
-
-	<p><?php echo lang('category_edit_text'); ?></p>
-
-</div>
-
-<br />
-
-<?php if (isset($records) && is_array($records) && count($records)) : ?>
-				
-	<h2>Category</h2>
-	<table>
-		<thead>
-			<tr>
+<div class="admin-box">
+	<h3>Category</h3>
+	<?php echo form_open($this->uri->uri_string()); ?>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<?php if ($this->auth->has_permission('Category.Content.Delete') && isset($records) && is_array($records) && count($records)) : ?>
+					<th class="column-check"><input class="check-all" type="checkbox" /></th>
+					<?php endif;?>
+					
+					<th>Name</th>
+					<th>Current products count</th>
+					<th>URL</th>
+				</tr>
+			</thead>
+			<?php if (isset($records) && is_array($records) && count($records)) : ?>
+			<tfoot>
+				<?php if ($this->auth->has_permission('Category.Content.Delete')) : ?>
+				<tr>
+					<td colspan="11">
+						<?php echo lang('bf_with_selected') ?>
+						<input type="submit" name="delete" id="delete-me" class="btn btn-danger" value="<?php echo lang('bf_action_delete') ?>" onclick="return confirm('<?php echo lang('category_delete_confirm'); ?>')">
+					</td>
+				</tr>
+				<?php endif;?>
+			</tfoot>
+			<?php endif; ?>
+			<tbody>
+			<?php if (isset($records) && is_array($records) && count($records)) : ?>
+			<?php foreach ($records as $record) : ?>
+				<tr>
+					<?php if ($this->auth->has_permission('Category.Content.Delete')) : ?>
+					<td><input type="checkbox" name="checked[]" value="<?php echo $record->id ?>" /></td>
+					<?php endif;?>
+					
+				<?php if ($this->auth->has_permission('Category.Content.Edit')) : ?>
+				<td><?php echo anchor(SITE_AREA .'/content/category/edit/'. $record->id, '<i class="icon-pencil">&nbsp;</i>' .  $record->category_name) ?></td>
+				<?php else: ?>
+				<td><?php echo $record->category_name ?></td>
+				<?php endif; ?>		
 			
-		<th>Name</th>
-		<th>Is active</th>
-		<th>Parent</th>
-		<th>Products count</th>
-		<th>Meta title</th>
-		<th>Meta description</th>
-		<th>Url</th>
-		
-			<th><?php echo lang('category_actions'); ?></th>
-			</tr>
-		</thead>
-		<tbody>
-		
-		<?php foreach ($records as $record) : ?>
-			<tr>
-				
-				<td><?php echo $record->category_name?></td>
-				<td><?php echo $record->category_is_active?></td>
-				<td><?php echo $record->category_parent_id?></td>
 				<td><?php echo $record->category_products_count?></td>
-				<td><?php echo $record->category_meta_title?></td>
-				<td><?php echo $record->category_meta_description?></td>
 				<td><?php echo $record->category_url?></td>
-				<td><?php echo anchor(SITE_AREA .'/content/category/edit/'. $record->id, lang('category_edit'), '') ?></td>
-			</tr>
-		<?php endforeach; ?>
-		</tbody>
-	</table>
-<?php endif; ?>
+				</tr>
+			<?php endforeach; ?>
+			<?php else: ?>
+				<tr>
+					<td colspan="11">No records found that match your selection.</td>
+				</tr>
+			<?php endif; ?>
+			</tbody>
+		</table>
+	<?php echo form_close(); ?>
+</div>

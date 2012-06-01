@@ -1,34 +1,31 @@
-<div class="box create rounded">
-
-	<h3>Product</h3>
-
+<div>
+	<h1 class="page-header">Product</h1>
 </div>
 
 <br />
 
 <?php if (isset($records) && is_array($records) && count($records)) : ?>
 				
-	<table>
+	<table class="table table-striped table-bordered">
 		<thead>
 		
 			
-		<th>SKU</th>
-		<th>Price</th>
-		<th>Special Price</th>
-		<th>Special Price From Date</th>
-		<th>Special Price To Date</th>
-		<th>Cost</th>
-		<th>Name</th>
-		<th>Description</th>
-		<th>Meta title</th>
-		<th>Meta description</th>
-		<th>Meta keywords</th>
-		<th>Is new</th>
-		<th>Visibility</th>
-		<th>Weight</th>
-		<th>URL</th>
+		<th>Product Sku</th>
+		<th>Product Price</th>
+		<th>Product Special Price</th>
+		<th>Product Special Price From Date</th>
+		<th>Product Special Price To Date</th>
+		<th>Product Cost</th>
+		<th>Product Name</th>
+		<th>Product Description</th>
+		<th>Product Meta Title</th>
+		<th>Product Meta Description</th>
+		<th>Product Meta Keywords</th>
+		<th>Product Is New</th>
+		<th>Product Is Active</th>
+		<th>Product Weight</th>
+		<th>Product Url</th>
 		<th>Created</th>
-		<th>Modified</th>
 		
 		</thead>
 		<tbody>

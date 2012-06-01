@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Migration_Install_media_gallery extends Migration {
+class Migration_Install_stock extends Migration {
 	
 	public function up() 
 	{
@@ -8,13 +8,12 @@ class Migration_Install_media_gallery extends Migration {
 
 		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
 			$this->dbforge->add_field("`product_sku` VARCHAR(64) NOT NULL");
-			$this->dbforge->add_field("`image_path` VARCHAR(250) NOT NULL");
-			$this->dbforge->add_field("`image_position` TINYINT(1) NOT NULL");
-			$this->dbforge->add_field("`image_is_default` TINYINT(1) NOT NULL");
-			$this->dbforge->add_field("`image_type` ENUM('thumb','small_image','large_image') NOT NULL");
-			$this->dbforge->add_field("`image_label` VARCHAR(128) NULL");
+			$this->dbforge->add_field("`qty` INT(11) NOT NULL");
+			$this->dbforge->add_field("`low_stock_qty` INT(11) NOT NULL");
+			$this->dbforge->add_field("`is_in_stock` TINYINT(1) NOT NULL");
+			$this->dbforge->add_field("`manage_stock` TINYINT(1) NOT NULL");
 		$this->dbforge->add_key('id', true);
-		$this->dbforge->create_table('product_media');
+		$this->dbforge->create_table('product_stock');
 	}
 	
 	//--------------------------------------------------------------------
@@ -23,7 +22,7 @@ class Migration_Install_media_gallery extends Migration {
 	{
 		$prefix = $this->db->dbprefix;
 
-		$this->dbforge->drop_table('product_media');
+		$this->dbforge->drop_table('product_stock');
 
 	}
 	

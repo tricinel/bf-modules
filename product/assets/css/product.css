@@ -1,0 +1,119 @@
+/*-------------------------
+	Dropbox Element
+--------------------------*/
+
+.images-group .controls div {
+	float:left;
+	margin-right:30px;
+}
+
+.images-group .controls {
+	margin-top:20px;
+}
+
+#dropbox{
+	background-color:#fff;
+	border-radius:4px;
+	position: relative;
+	margin:20px;
+	min-height: 200px;
+	overflow: hidden;
+	padding-bottom: 40px;
+    width: 96%;
+    border:1px solid #ccc;
+}
+
+
+#dropbox .message{
+	font-size: 11px;
+    text-align: center;
+    padding-top:110px;
+    display: block;
+}
+
+#dropbox .message i{
+	color:#ccc;
+	font-size:10px;
+}
+
+#dropbox:before{
+	border-radius:3px 3px 0 0;
+}
+
+
+
+/*-------------------------
+	Image Previews
+--------------------------*/
+
+
+
+#dropbox .preview{
+	width: 100px;
+	height: 100px;
+	float:left;
+	margin: 20px 0 0 10px;
+	position: relative;
+}
+
+#dropbox .preview img{
+	max-width: 70px;
+	max-height: 70px;
+	border:3px solid #fff;
+	display: inline-block;
+	float:left;
+	box-shadow:0 0 2px #000;
+}
+
+#dropbox .imageHolder{
+	display: inline-block;
+	position:relative;
+}
+
+#dropbox .uploaded{
+	position: absolute;
+	top:0;
+	left:0;
+	height:100%;
+	width:100%;
+	background: url('../images/img_done.png') no-repeat center center rgba(255,255,255,0.5);
+	display: none;
+}
+
+#dropbox .preview.done .uploaded{
+	display: inline-block;
+}
+
+
+
+/*-------------------------
+	Progress Bars
+--------------------------*/
+
+
+
+#dropbox .progressHolder{
+	position: absolute;
+	background-color:#fafafa;
+	height:12px;
+	width:100px;
+	left:0;
+	bottom: 0;
+}
+
+#dropbox .progress{
+	background-color:#000;
+	position: absolute;
+	height:100%;
+	left:0;
+	width:0;
+	border:1px solid #000;
+	-moz-transition:0.25s;
+	-webkit-transition:0.25s;
+	-o-transition:0.25s;
+	transition:0.25s;
+}
+
+#dropbox .preview.done .progress{
+	width:100% !important;
+}
