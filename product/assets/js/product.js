@@ -34,6 +34,28 @@
 
 })();
 
+//function to delete an image
+function deleteImage(index,file_name){
+	var container = $('#image_'+index+''),
+		images_count = $('input[name="images_count"]'),
+		count = images_count.val();
+
+	$.ajax({
+		url: 'delete_image',
+		type: 'POST',
+		data: { file_name: file_name }
+	}).done(function() { 
+		alert('Image deleted!');
+		container.empty().remove();
+		count--;
+		images_count.val(count);
+		if(count == '0') $('span.message').show();
+	});
+
+	return false;
+}
+
+
 //function sets default, thumb, small_image, large_image values
 function setImageProperty(field_name,index){
 	var container = $('#dropbox').find('.controls'),

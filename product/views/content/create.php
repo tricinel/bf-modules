@@ -117,6 +117,7 @@ $id = isset($product['id']) ? $product['id'] : '';
             <div class="tab-pane" id="media-tab">
 
                 <div id="dropbox">
+                    <input type="hidden" name="images_count" id="images_count" value=""/>
                     <span class="message">Drop images here to upload.</span>
                 </div>
 

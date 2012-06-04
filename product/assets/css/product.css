@@ -7,6 +7,18 @@
 	margin-right:30px;
 }
 
+.images-group .controls .actions {
+	padding-top:10px;
+	float:right;
+}
+
+.images-group .controls:after{
+	*zoom: 1;
+	display: table;
+	content: "";
+    clear: both;
+}
+
 .images-group .controls {
 	margin-top:20px;
 }

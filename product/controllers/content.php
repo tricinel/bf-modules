@@ -45,7 +45,9 @@ class content extends Admin_Controller {
 					$result = FALSE;
 					foreach ($checked as $pid)
 					{
-						$result = $this->product_model->delete($pid);
+						$product_sku = $this->product_model->getSKU($pid);
+						$product_images = $this->product_model->getImages($product_sku);
+						$result = $this->product_model->deleteProduct($pid,$product_sku,$product_images);
 					}
 
 					if ($result)
@@ -173,9 +175,13 @@ class content extends Admin_Controller {
 
 		if (!empty($id))
 		{
+			$product_sku = $this->product_model->getSKU($pid);
+			$product_images = $this->product_model->getImages($product_sku);
+			$result = $this->product_model->deleteProduct($pid,$product_sku,$product_images);
 
-			if ($this->product_model->delete($id))
-			{
+			if ($result)
+			{	
+				$this->product_model->deleteAdditionalDataForProductWithSKU($product_sku->product_sku);
 				// Log the activity
 				$this->load->model('activities/Activity_model', 'activity_model');
 
@@ -198,7 +204,7 @@ class content extends Admin_Controller {
 	/*
 		Method: upload()
 
-		Allows deleting of Product data.
+		Allows uploading of product images.
 	*/
 	public function upload()
 	{
@@ -239,6 +245,22 @@ class content extends Admin_Controller {
 		}
 
 		echo json_encode($response);
+		exit;
+	}
+
+	//--------------------------------------------------------------------
+
+	/*
+		Method: delete_image()
+
+		Allows deleting of an image.
+	*/
+	public function delete_image()
+	{
+		$directory_path = 'media/catalog/';
+		$file_name = $_POST['file_name'];
+
+		unlink($directory_path.$file_name);
 		exit;
 	}
 
@@ -324,20 +346,23 @@ class content extends Admin_Controller {
 
 		//images data
 		$imgCount = $this->input->post('images_count');
+		$max_images = 5;//same number of maximum images as in uploadjs.php
 		$i = 0;
 
 		if(isset($imgCount) && $imgCount > $i) {
 			$image['product_sku'] = $this->input->post('product_sku');
-			for($i;$i<$imgCount;$i++){
-				$image['image_path'] = 'media/catalog/'.$this->input->post('image_src_'.$i);
-				$image['image_position'] = $this->input->post('image_position_'.$i);
-				$image['image_is_default'] = $this->input->post('is_default_'.$i);
-				$image['image_is_thumb'] = $this->input->post('is_thumb_'.$i);
-				$image['image_is_small_image'] = $this->input->post('is_small_image_'.$i);
-				$image['image_label'] = $this->input->post('image_label_'.$i);
+			for($i;$i<$max_images;$i++){
+				$image_src = $this->input->post('image_src_'.$i);
+				if(!empty($image_src)) {//check if image exists
+					$image['image_path'] = 'media/catalog/'.$this->input->post('image_src_'.$i);
+					$image['image_position'] = $this->replaceifempty($this->input->post('image_position_'.$i),'0');
+					$image['image_is_default'] = $this->input->post('is_default_'.$i);
+					$image['image_is_thumb'] = $this->input->post('is_thumb_'.$i);
+					$image['image_is_small_image'] = $this->input->post('is_small_image_'.$i);
+					$image['image_label'] = $this->input->post('image_label_'.$i);
 
-				$this->product_model->insertImageData($image);
-
+					$this->product_model->insertImageData($image);
+				}
 			}
 		}
 
