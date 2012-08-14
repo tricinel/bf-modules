@@ -12,7 +12,7 @@ class category extends Front_Controller {
 		$this->load->library('form_validation');
 		$this->load->model('category_model', null, true);
 		$this->lang->load('category');
-		
+
 	}
 
 	//--------------------------------------------------------------------
@@ -31,6 +31,22 @@ class category extends Front_Controller {
 
 		Template::set('records', $records);
 		Template::render();
+	}
+
+	//--------------------------------------------------------------------
+
+
+
+
+	/*
+		Method: view()
+
+		Displays a list of form data.
+	*/
+	public function view($category)
+	{
+
+		echo $category;
 	}
 
 	//--------------------------------------------------------------------

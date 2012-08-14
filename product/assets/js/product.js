@@ -45,6 +45,7 @@ function deleteImage(index,file_name){
 		type: 'POST',
 		data: { file_name: file_name }
 	}).done(function() { 
+		//replace this alert with a bootstrap alert
 		alert('Image deleted!');
 		container.empty().remove();
 		count--;
@@ -66,3 +67,21 @@ function setImageProperty(field_name,index){
 	activeField.val(1);
 	return false;
 }
+
+//function builds category tree
+$(function () {
+	$("#cats").jstree({ 
+		"json_data" : {
+			//"data" : buildTree()
+			"ajax" : {
+				"url" : "/boardcoverz/manage/content/category/build_tree",
+				"data" : function (n) { 
+					return { id : 0 }; 
+				}
+			}
+		},
+		"plugins" : [ "json_data", "ui" ]
+	}).bind("select_node.jstree", function (e, data) {
+		$('input[name="category_url"]').val($(data.rslt.obj).data('url'));
+	});
+});

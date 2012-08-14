@@ -11,11 +11,14 @@ class content extends Admin_Controller {
 
 		$this->auth->restrict('Product.Content.View');
 		$this->load->model('product_model', null, true);
+		$this->load->model('category/category_model', null, true);
 		$this->lang->load('product');
 		
 			Assets::add_css('flick/jquery-ui-1.8.13.custom.css');
 			Assets::add_js('jquery-ui-1.8.13.min.js');
+			Assets::add_js('jquery.treeview.js');
 			Assets::add_css('jquery-ui-timepicker.css');
+			Assets::add_css('jstree.css');
 			Assets::add_js('jquery-ui-timepicker-addon.js');
 			Assets::add_js(Template::theme_url('js/editors/ckeditor/ckeditor.js'));
 		Template::set_block('sub_nav', 'content/_sub_nav');
@@ -109,6 +112,7 @@ class content extends Admin_Controller {
 		Assets::add_module_js('product', 'product.js');
 		Assets::add_js($this->load->view('content/uploadjs', null, true), 'inline');
 
+		Template::set('categories', $this->category_model->find_all());
 		Template::set('toolbar_title', lang('product_create') . ' Product');
 		Template::render();
 	}
@@ -152,7 +156,11 @@ class content extends Admin_Controller {
 		}
 
 		Template::set('product', $this->product_model->find($id));
+
+		Assets::add_module_css('product', 'product.css');
+		Assets::add_module_js('product', 'ajaxfileupload.js');
 		Assets::add_module_js('product', 'product.js');
+		Assets::add_js($this->load->view('content/uploadjs', null, true), 'inline');
 
 		Template::set('toolbar_title', lang('product_edit') . ' Product');
 		Template::render();
@@ -316,9 +324,14 @@ class content extends Admin_Controller {
 		$special_price                           = $this->input->post('product_special_price');
 		$special_price_from_date                 = $this->input->post('product_special_price_from_date');
 		$special_price_to_date                   = $this->input->post('product_special_price_to_date');
+		$category_url                            = $this->input->post('category_url');
 		$product_url                             = $this->input->post('product_url');
 		$product_name                            = $this->input->post('product_name');
 		$product_meta_title                      = $this->input->post('product_meta_title');
+		
+		//check if new url is unique
+		$url                                     = $category_url.'/'.$this->replaceifempty($product_url, strtolower(url_title($product_name)));
+		$url                                     = ($this->product_model->is_unique('product_url', $url)) ? $url : $url.rand(1, 99);
 		
 		$data                                    = array();
 		$data['product_sku']                     = $this->input->post('product_sku');
@@ -336,6 +349,12 @@ class content extends Admin_Controller {
 		$data['product_is_active']               = $this->input->post('product_is_active');
 		$data['product_weight']                  = $this->input->post('product_weight');
 		$data['product_url']                     = $this->replaceifempty($product_url, strtolower(url_title($product_name)));
+		
+		//routes
+		$route['product_id']                      = $id;
+		$route['original_url']                    = $this->replaceifempty($product_url, strtolower(url_title($product_name)));;
+		$route['rewrite_url']                     = $url;
+		$this->product_model->insertNewRoute($route);
 		
 		//stock management data
 		$stock['manage_stock']                   = $this->input->post('manage_stock');
@@ -382,6 +401,7 @@ class content extends Admin_Controller {
 		}
 		else if ($type == 'update')
 		{
+			//need to update everything else as well [stock,routes,images]
 			$return = $this->product_model->update($id, $data);
 		}
 

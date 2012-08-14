@@ -26,6 +26,7 @@ $id = isset($product['id']) ? $product['id'] : '';
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#general-tab">General</a></li>
         <li><a data-toggle="tab" href="#meta-tab">Meta information</a></li>
+        <li><a data-toggle="tab" href="#categories-tab">Categories</a></li>
         <li><a data-toggle="tab" href="#media-tab">Images</a></li>
         <li><a data-toggle="tab" href="#pricing-tab">Pricing</a></li>
         <li><a data-toggle="tab" href="#stock-tab">Stock management</a></li>
@@ -112,6 +113,15 @@ $id = isset($product['id']) ? $product['id'] : '';
                 </div>
                 
             </div>
+
+             <!-- Categories -->
+            <div class="tab-pane" id="categories-tab">
+
+                <input type="hidden" name="category_url" id="category_url" value=""/>
+    
+                <div id="cats" class="jstree-apple" style="min-height:200px;"></div>
+            
+            </div>
             
             <!-- Images -->
             <div class="tab-pane" id="media-tab">
@@ -176,7 +186,7 @@ $id = isset($product['id']) ? $product['id'] : '';
                 <div class="control-group <?php echo form_error('qty') ? 'error' : ''; ?>">
                     <?php echo form_label('Quantity'. lang('bf_form_label_required'), 'qty', array('class' => "control-label") ); ?>
                     <div class='controls'>
-                        <input id="qty" type="text" name="qty" maxlength="11" value="<?php echo set_value('qty', isset($product['qty']) ? $product['qty'] : ''); ?>"  />
+                        <input id="qty" type="text" name="qty" maxlength="11" value="<?php echo set_value('qty', isset($product['qty']) ? $product['qty'] : '0'); ?>"  />
                         <span class="help-inline"><?php echo form_error('qty'); ?></span>
                     </div>
                 </div>
@@ -184,7 +194,7 @@ $id = isset($product['id']) ? $product['id'] : '';
                 <div class="control-group <?php echo form_error('low_stock_qty') ? 'error' : ''; ?>">
                     <?php echo form_label('Low stock quantity'. lang('bf_form_label_required'), 'low_stock_qty', array('class' => "control-label") ); ?>
                     <div class='controls'>
-                        <input id="low_stock_qty" type="text" name="low_stock_qty" maxlength="11" value="<?php echo set_value('low_stock_qty', isset($product['low_stock_qty']) ? $product['low_stock_qty'] : ''); ?>"  />
+                        <input id="low_stock_qty" type="text" name="low_stock_qty" maxlength="11" value="<?php echo set_value('low_stock_qty', isset($product['low_stock_qty']) ? $product['low_stock_qty'] : '0'); ?>"  />
                         <span class="help-inline"><?php echo form_error('low_stock_qty'); ?></span>
                     </div>
                 </div>

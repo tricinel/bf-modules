@@ -18,7 +18,7 @@ class Product_model extends BF_Model {
 		{
 			return TRUE;
 		}
-		
+
 		return FALSE;
 	}
 
@@ -30,7 +30,7 @@ class Product_model extends BF_Model {
 		{
 			return TRUE;
 		}
-		
+
 		return FALSE;
 	}
 
@@ -43,17 +43,23 @@ class Product_model extends BF_Model {
 		//delete product stock information
 		$this->db->where(array('product_sku' => $product_sku));
 		$this->db->delete('product_stock');
-		
+
+		//delete route
+		$this->db->where(array('product_id' => $id));
+		$this->db->delete('routes');
+
 		//delete image entries
 		$this->db->where(array('product_sku' => $product_sku));
 		$this->db->delete('product_media');
 
 		//delete images from folder
-		foreach($product_images as $img)
-		{
-			if (file_exists($img)) unlink($img);
+		if($product_images) {
+			foreach($product_images as $img)
+			{
+				if (file_exists($img)) unlink($img);
+			}
 		}
-			
+
 		//need to implement error handling, for now just return true
 		return TRUE;
 	}
@@ -62,12 +68,16 @@ class Product_model extends BF_Model {
 	{
 		$q = $this->db->get_where('product_media', array('product_sku' => $product_sku));
 
-		foreach($q->result() as $row)
-		{
-			$data[] = $row->image_path;
+		if($q->num_rows() > 0) {
+			foreach($q->result() as $row)
+			{
+				$data[] = $row->image_path;
+			}
+
+			return $data;
 		}
-	
-		return $data;
+
+		return false;
 	}
 
 	public function getSKU($id)
@@ -75,7 +85,7 @@ class Product_model extends BF_Model {
 		$q = $this->db->get_where('product', array('id' => $id));
 
 		if($q->num_rows() == 1)
-		{	
+		{
 			$row = $q->row();
 
 			$data = $row->product_sku;

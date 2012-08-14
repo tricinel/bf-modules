@@ -35,20 +35,28 @@ $id = isset($category['id']) ? $category['id'] : '';
 
         <?php echo form_dropdown('category_is_active', $bool, set_value('category_is_active', isset($category['category_is_active']) ? $category['category_is_active'] : ''), 'Category is active'. lang('bf_form_label_required'))?>
 
-        <?php if( isset($categories) && !empty($categories) ):
-            $cats = array();
-            $cats['0'] = 'None';
-            $category = (isset($category)) ? $category : false;
+        <?php //if( isset($categories) && !empty($categories) ):
+        //     $cats = array();
+        //     $cats['0'] = 'None';
+        //     $category = (isset($category)) ? $category : false;
 
-            if(count($categories) > 0) {
-                foreach($categories as $cat):
-                    if($cat->category_name != $category['category_name']) $cats[$cat->id] = $cat->category_name;
-                endforeach;
-            }
+        //     if(count($categories) > 0) {
+        //         foreach($categories as $cat):
+        //             if($cat->category_name != $category['category_name']) $cats[$cat->id] = $cat->category_name;
+        //         endforeach;
+        //     }
 
-            echo form_dropdown('category_parent_id', $cats, set_value('category_parent_id', isset($category['category_parent_id']) ? $category['category_parent_id'] : ''), 'Parent category');
+        //     echo form_dropdown('category_parent_id', $cats, set_value('category_parent_id', isset($category['category_parent_id']) ? $category['category_parent_id'] : ''), 'Parent category');
         
-        endif;?>
+        // endif;?>
+
+        <div class="control-group">
+            <?php echo form_label('Parent category', 'category_parent_id', array('class' => "control-label") ); ?>
+            <input type="hidden" name="category_parent_id" id="category_parent_id" value="0"/>
+            <div class="controls">
+                <div id="cats" class="jstree-apple" style="min-height:100px; margin-top:0px;"></div>
+            </div>
+        </div>
 
         
         <div class="control-group <?php echo form_error('category_meta_title') ? 'error' : ''; ?>">
@@ -82,6 +90,8 @@ $id = isset($category['id']) ? $category['id'] : '';
         <input id="category_url" type="text" name="category_url" maxlength="255" value="<?php echo set_value('category_url', isset($category['category_url']) ? $category['category_url'] : ''); ?>"  />
         <span class="help-inline"><?php echo form_error('category_url'); ?></span>
         </div>
+
+        <input type="hidden" name="parent_category_url" id="parent_category_url" value=""/>
 
 
         </div>

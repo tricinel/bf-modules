@@ -2,6 +2,8 @@
 	$bool = array(1 => 'Yes',0 => 'No');
 ?>
 
+$.jstree._themes = "<?php echo site_url('bonfire/themes/admin/images/jstree-themes').'/';?>";
+
 (function(){
 	
 	var dropbox = $('#dropbox'),
@@ -63,6 +65,10 @@
 
 		afterAll: function(){
 			$('input[name="images_count"]').val(count);
+			//set defaults
+			$('#image_0').find('input[name="image_is_default"]').attr('checked','checked');
+			$('#image_0').find('input[name="image_type_thumb"]').attr('checked','checked');
+			$('#image_0').find('input[name="image_type_small_image"]').attr('checked','checked');
 		}
     	 
 	});

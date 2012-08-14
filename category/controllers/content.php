@@ -12,6 +12,9 @@ class content extends Admin_Controller {
 		$this->auth->restrict('Category.Content.View');
 		$this->load->model('category_model', null, true);
 		$this->lang->load('category');
+
+		Assets::add_css('jstree.css');
+		Assets::add_js('jquery.treeview.js');
 		
 		Template::set_block('sub_nav', 'content/_sub_nav');
 	}
@@ -106,8 +109,6 @@ class content extends Admin_Controller {
 	}
 
 	//--------------------------------------------------------------------
-
-
 
 	/*
 		Method: edit()
@@ -229,10 +230,18 @@ class content extends Admin_Controller {
 		}
 
 		// make sure we only pass in the fields we want
-		$url                               = $this->input->post('category_url');
 		$category_name                     = $this->input->post('category_name');
 		$category_meta_title               = $this->input->post('category_meta_title');
 		$category_products_count           = $this->input->post('category_products_count');
+		$parent_category_url               = $this->input->post('parent_category_url');
+		$category_url                      = $this->input->post('category_url');
+		
+		//check if parent_category_url is filled in
+		$parent_category_url               = (empty($parent_category_url)) ? '' : $parent_category_url.'/';
+		//check if new url is unique
+		$category_url                      = (empty($category_url)) ? strtolower(url_title($category_name)) : $category_url;
+		$url                               = $parent_category_url.$category_url;
+		$url                               = ($this->category_model->is_unique('category_url', $url)) ? $url : $url.rand(1, 99);
 		
 		$data                              = array();
 		$data['category_name']             = $category_name;
@@ -241,7 +250,7 @@ class content extends Admin_Controller {
 		$data['category_meta_title']       = (empty($category_meta_title)) ? $category_name : $category_meta_title;
 		$data['category_meta_description'] = $this->input->post('category_meta_description');
 		$data['category_meta_keywords']    = $this->input->post('category_meta_keywords');
-		$data['category_url']              = (empty($url)) ? $this->sanitize_segment($category_name) : $this->sanitize_segment($url);
+		$data['category_url']              = $url;
 
 		if ($type == 'insert')
 		{
@@ -265,27 +274,16 @@ class content extends Admin_Controller {
 
 	//--------------------------------------------------------------------
 
-	/*
-		Method: sanitize_segment($segment)
-		
-		Creates a web-friendly version of a string by eliminating spaces and other characters
-		
-		Parameters:
-			$segment	- the string to be sanitized
-		
-		Returns:
-			A web-friendly string
-	*/
 
-	private function sanitize_segment($segment)
-	{
-		$chars = array(' ', '/', '&', '"', '(', ')', '#', ',', '.','----','---','--','\'');
-	    foreach($chars as $char){
-	       $segment = str_replace($char, "-", $segment);
-	    }
-    	return strtolower($segment);
-	}
 
 	//--------------------------------------------------------------------
+
+	public function build_tree()
+	{
+		$tree = $this->category_model->buildNavigationTree();
+
+		echo json_encode($tree);
+		exit;
+	}
 
 }
