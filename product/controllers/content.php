@@ -11,9 +11,10 @@ class content extends Admin_Controller {
 
 		$this->auth->restrict('Product.Content.View');
 		$this->load->model('product_model', null, true);
+		$this->load->model('routes_model', null, true);
 		$this->load->model('category/category_model', null, true);
 		$this->lang->load('product');
-		
+
 			Assets::add_css('flick/jquery-ui-1.8.13.custom.css');
 			Assets::add_js('jquery-ui-1.8.13.min.js');
 			Assets::add_js('jquery.treeview.js');
@@ -48,7 +49,7 @@ class content extends Admin_Controller {
 					$result = FALSE;
 					foreach ($checked as $pid)
 					{
-						$product_sku = $this->product_model->getSKU($pid);
+						$product_sku = $product_sku = $this->product_model->get_field($pid, 'product_sku');
 						$product_images = $this->product_model->getImages($product_sku);
 						$result = $this->product_model->deleteProduct($pid,$product_sku,$product_images);
 					}
@@ -98,7 +99,8 @@ class content extends Admin_Controller {
 
 				$this->activity_model->log_activity($this->current_user->id, lang('product_act_create_record').': ' . $insert_id . ' : ' . $this->input->ip_address(), 'product');
 
-				Template::set_message(lang('product_create_success'), 'success');
+				$message = '<h4>' . lang('product_create_success') . '</h4><br/><p>Product catalog needs to be updated! Every time you enter a new product, it is necessary that you upgrade your SEO friendly URLs.</p><p><a href="" class="btn btn-success">Update catalog now</a></p>';
+				Template::set_message($message, 'success');
 				Template::redirect(SITE_AREA .'/content/product');
 			}
 			else
@@ -157,6 +159,10 @@ class content extends Admin_Controller {
 
 		Template::set('product', $this->product_model->find($id));
 
+		$product_sku = $this->product_model->get_field($id, 'product_sku');
+		Template::set('stock', $this->product_model->getStockInformation($product_sku));
+		Template::set('images', $this->product_model->getImages($product_sku));
+
 		Assets::add_module_css('product', 'product.css');
 		Assets::add_module_js('product', 'ajaxfileupload.js');
 		Assets::add_module_js('product', 'product.js');
@@ -183,13 +189,12 @@ class content extends Admin_Controller {
 
 		if (!empty($id))
 		{
-			$product_sku = $this->product_model->getSKU($pid);
+			$product_sku = $this->product_model->get_field($id, 'product_sku');
 			$product_images = $this->product_model->getImages($product_sku);
-			$result = $this->product_model->deleteProduct($pid,$product_sku,$product_images);
+			$result = $this->product_model->deleteProduct($id,$product_sku,$product_images);
 
 			if ($result)
-			{	
-				$this->product_model->deleteAdditionalDataForProductWithSKU($product_sku->product_sku);
+			{
 				// Log the activity
 				$this->load->model('activities/Activity_model', 'activity_model');
 
@@ -217,7 +222,7 @@ class content extends Admin_Controller {
 	public function upload()
 	{
 		$this->load->library('upload');
-		
+
 		$config['upload_path'] = './media/catalog/';
 		$config['allowed_types'] = 'gif|jpg|jpeg|png';
 		$config['max_width'] = '800';
@@ -229,7 +234,7 @@ class content extends Admin_Controller {
 		$arr_files  =   @$_FILES['pics'];
 		$_FILES     =   array();
 		$response 	=	array();
-	
+
 		foreach(array_keys($arr_files['name']) as $h)
 			$_FILES["file_{$h}"] = array(
 										'name'		=>	$arr_files['name'][$h],
@@ -238,7 +243,7 @@ class content extends Admin_Controller {
 										'error'     =>  $arr_files['error'][$h],
 										'size'      =>  $arr_files['size'][$h]
 										);
-		
+
 
 		foreach(array_keys($_FILES) as $file) {
 
@@ -298,8 +303,8 @@ class content extends Admin_Controller {
 			$_POST['id'] = $id;
 		}
 
-		
-		$this->form_validation->set_rules('product_sku','Product Sku','required|unique[bcz_product.product_sku,bcz_product.id]|trim|xss_clean|max_length[64]');
+
+		$this->form_validation->set_rules('product_sku','Product Sku','required|unique[product.product_sku,product.id]|trim|xss_clean|max_length[64]');
 		$this->form_validation->set_rules('product_price','Product Price','required|trim|xss_clean|is_decimal|max_length[13]');
 		$this->form_validation->set_rules('product_special_price','Product Special Price','is_decimal|max_length[13]');
 		$this->form_validation->set_rules('product_special_price_from_date','Product Special Price From Date','');
@@ -313,7 +318,7 @@ class content extends Admin_Controller {
 		$this->form_validation->set_rules('product_is_new','Product Is New','required|integer|max_length[1]');
 		$this->form_validation->set_rules('product_is_active','Product Is Active','required|integer|max_length[1]');
 		$this->form_validation->set_rules('product_weight','Product Weight','required|trim|xss_clean|is_decimal|max_length[13]');
-		$this->form_validation->set_rules('product_url','Product Url','unique[bcz_product.product_url,bcz_product.id]|trim|xss_clean|max_length[255]');
+		$this->form_validation->set_rules('product_url','Product Url','unique[product.product_url,product.id]|trim|xss_clean|max_length[255]');
 
 		if ($this->form_validation->run() === FALSE)
 		{
@@ -321,41 +326,32 @@ class content extends Admin_Controller {
 		}
 
 		// make sure we only pass in the fields we want
-		$special_price                           = $this->input->post('product_special_price');
-		$special_price_from_date                 = $this->input->post('product_special_price_from_date');
-		$special_price_to_date                   = $this->input->post('product_special_price_to_date');
 		$category_url                            = $this->input->post('category_url');
+		$category_id                             = $this->input->post('category_id');
 		$product_url                             = $this->input->post('product_url');
 		$product_name                            = $this->input->post('product_name');
-		$product_meta_title                      = $this->input->post('product_meta_title');
-		
+
 		//check if new url is unique
-		$url                                     = $category_url.'/'.$this->replaceifempty($product_url, strtolower(url_title($product_name)));
+		$url 									 = strtolower($this->replaceifempty($product_url,url_title($product_name)));
 		$url                                     = ($this->product_model->is_unique('product_url', $url)) ? $url : $url.rand(1, 99);
-		
+
 		$data                                    = array();
 		$data['product_sku']                     = $this->input->post('product_sku');
 		$data['product_price']                   = $this->input->post('product_price');
-		$data['product_special_price']           = $this->replaceifempty($special_price, null);
-		$data['product_special_price_from_date'] = $this->replaceifempty($special_price_from_date, null);
-		$data['product_special_price_to_date']   = $this->replaceifempty($special_price_to_date, null);
+		$data['product_special_price']           = $this->replaceifempty($this->input->post('product_special_price'),null);
+		$data['product_special_price_from_date'] = $this->replaceifempty($this->input->post('product_special_price_from_date'),null);
+		$data['product_special_price_to_date']   = $this->replaceifempty($this->input->post('product_special_price_to_date'),null);
 		$data['product_cost']                    = $this->input->post('product_cost');
 		$data['product_name']                    = $product_name;
 		$data['product_description']             = $this->input->post('product_description');
-		$data['product_meta_title']              = $this->replaceifempty($product_meta_title, $product_name);
+		$data['product_meta_title']              = $this->input->post('product_meta_title');
 		$data['product_meta_description']        = $this->input->post('product_meta_description');
 		$data['product_meta_keywords']           = $this->input->post('product_meta_keywords');
 		$data['product_is_new']                  = $this->input->post('product_is_new');
 		$data['product_is_active']               = $this->input->post('product_is_active');
 		$data['product_weight']                  = $this->input->post('product_weight');
-		$data['product_url']                     = $this->replaceifempty($product_url, strtolower(url_title($product_name)));
-		
-		//routes
-		$route['product_id']                      = $id;
-		$route['original_url']                    = $this->replaceifempty($product_url, strtolower(url_title($product_name)));;
-		$route['rewrite_url']                     = $url;
-		$this->product_model->insertNewRoute($route);
-		
+		$data['product_url']                     = $url;
+
 		//stock management data
 		$stock['manage_stock']                   = $this->input->post('manage_stock');
 		$stock['qty']                            = $this->input->post('qty');
@@ -390,6 +386,14 @@ class content extends Admin_Controller {
 		{
 			$id = $this->product_model->insert($data);
 			$this->product_model->insertStockData($stock);
+			//routes
+			$route['product_id']                      = $id;
+			$route['original_url']                    = $url;
+			$route['rewrite_url']                     = $category_url.'/'.$url;
+			$this->routes_model->insert($route);
+
+			//increase category_products_count
+			$this->category_model->update($category_id, array('category_products_count' => 'category_products_count'+1));
 
 			if (is_numeric($id))
 			{
@@ -416,13 +420,13 @@ class content extends Admin_Controller {
 
 	/*
 		Method: replaceifempty($segment_to_be_replaced,$segment_to_replace)
-		
+
 		Creates a web-friendly version of a string by eliminating spaces and other characters
-		
+
 		Parameters:
 			$segment_to_be_replaced	- the string to be checked if is empty and replace on true
 			$segment_to_replace - the string to replace
-		
+
 		Returns:
 			A string
 	*/

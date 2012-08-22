@@ -80,6 +80,17 @@ class Product_model extends BF_Model {
 		return false;
 	}
 
+	public function getStockInformation($product_sku)
+	{
+		$q = $this->db->get_where('product_stock', array('product_sku' => $product_sku));
+
+		if($q->num_rows() > 0) {
+			return $q->row_array();
+		}
+
+		return false;
+	}
+
 	public function getSKU($id)
 	{
 		$q = $this->db->get_where('product', array('id' => $id));
