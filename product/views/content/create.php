@@ -42,7 +42,7 @@ $id = isset($product['id']) ? $product['id'] : '';
                 <div class="control-group <?php echo form_error('product_name') ? 'error' : ''; ?>">
                     <?php echo form_label('Name'. lang('bf_form_label_required'), 'product_name', array('class' => "control-label") ); ?>
                     <div class='controls'>
-                        <input id="product_name" type="text" name="product_name" maxlength="250" value="<?php echo set_value('product_name', isset($product['product_name']) ? $product['product_name'] : ''); ?>"  />
+                        <input id="product_name" type="text" name="product_name" maxlength="250" class="input-xxlarge" value="<?php echo set_value('product_name', isset($product['product_name']) ? $product['product_name'] : ''); ?>"  />
                         <span class="help-inline"><?php echo form_error('product_name'); ?></span>
                     </div>
                 </div>
@@ -58,19 +58,19 @@ $id = isset($product['id']) ? $product['id'] : '';
                 <div class="control-group <?php echo form_error('product_sku') ? 'error' : ''; ?>">
                     <?php echo form_label('SKU'. lang('bf_form_label_required'), 'product_sku', array('class' => "control-label") ); ?>
                     <div class='controls'>
-                        <input id="product_sku" type="text" name="product_sku" maxlength="64" value="<?php echo set_value('product_sku', isset($product['product_sku']) ? $product['product_sku'] : ''); ?>"  />
+                        <input id="product_sku" type="text" name="product_sku" maxlength="64" class="input-xxlarge" value="<?php echo set_value('product_sku', isset($product['product_sku']) ? $product['product_sku'] : ''); ?>"  />
                         <span class="help-inline"><?php echo form_error('product_sku'); ?></span>
                     </div>
                 </div>
 
-                <?php echo form_dropdown('product_is_new', $bool, set_value('product_is_new', isset($product['product_is_new']) ? $product['product_is_new'] : ''), 'Product is new'. lang('bf_form_label_required'))?>
+                <?php echo form_dropdown('product_is_new', $bool, set_value('product_is_new', isset($product['product_is_new']) ? $product['product_is_new'] : ''), 'Mark product as new?'. lang('bf_form_label_required'))?>
 
-                <?php echo form_dropdown('product_is_active', $bool, set_value('product_is_active', isset($product['product_is_active']) ? $product['product_is_active'] : ''), 'Product is active'. lang('bf_form_label_required'))?>
+                <?php echo form_dropdown('product_is_active', $bool, set_value('product_is_active', isset($product['product_is_active']) ? $product['product_is_active'] : ''), 'Mark product as active?'. lang('bf_form_label_required'))?>
 
                 <div class="control-group <?php echo form_error('product_weight') ? 'error' : ''; ?>">
                     <?php echo form_label('Weight'. lang('bf_form_label_required'), 'product_weight', array('class' => "control-label") ); ?>
                     <div class='controls'>
-                        <input id="product_weight" type="text" name="product_weight" maxlength="13" value="<?php echo set_value('product_weight', isset($product['product_weight']) ? $product['product_weight'] : ''); ?>"  />
+                        <input id="product_weight" type="text" name="product_weight" maxlength="13" class="input-xxlarge" value="<?php echo set_value('product_weight', isset($product['product_weight']) ? $product['product_weight'] : ''); ?>"  />
                         <span class="help-inline"><?php echo form_error('product_weight'); ?></span>
                     </div>
                 </div>
@@ -83,7 +83,7 @@ $id = isset($product['id']) ? $product['id'] : '';
                 <div class="control-group <?php echo form_error('product_meta_title') ? 'error' : ''; ?>">
                     <?php echo form_label('Meta Title', 'product_meta_title', array('class' => "control-label") ); ?>
                     <div class='controls'>
-                        <input id="product_meta_title" type="text" name="product_meta_title" maxlength="250" value="<?php echo set_value('product_meta_title', isset($product['product_meta_title']) ? $product['product_meta_title'] : ''); ?>"  />
+                        <input id="product_meta_title" type="text" name="product_meta_title" maxlength="250" class="input-xxlarge" value="<?php echo set_value('product_meta_title', isset($product['product_meta_title']) ? $product['product_meta_title'] : ''); ?>"  />
                         <span class="help-inline"><?php echo form_error('product_meta_title'); ?></span>
                     </div>
                 </div>
@@ -91,7 +91,7 @@ $id = isset($product['id']) ? $product['id'] : '';
                 <div class="control-group <?php echo form_error('product_meta_description') ? 'error' : ''; ?>">
                     <?php echo form_label('Meta Description', 'product_meta_description', array('class' => "control-label") ); ?>
                     <div class='controls'>
-                        <?php echo form_textarea( array( 'name' => 'product_meta_description', 'id' => 'product_meta_description', 'rows' => '5', 'cols' => '280', 'value' => set_value('product_meta_description', isset($product['product_meta_description']) ? $product['product_meta_description'] : '') ) )?>
+                        <?php echo form_textarea( array( 'name' => 'product_meta_description', 'id' => 'product_meta_description', 'class' => 'input-xxlarge', 'rows' => '5', 'cols' => '280', 'value' => set_value('product_meta_description', isset($product['product_meta_description']) ? $product['product_meta_description'] : '') ) )?>
                         <span class="help-inline"><?php echo form_error('product_meta_description'); ?></span>
                     </div>
                 </div>
@@ -99,7 +99,7 @@ $id = isset($product['id']) ? $product['id'] : '';
                 <div class="control-group <?php echo form_error('product_meta_keywords') ? 'error' : ''; ?>">
                     <?php echo form_label('Meta Keywords', 'product_meta_keywords', array('class' => "control-label") ); ?>
                     <div class='controls'>
-                        <?php echo form_textarea( array( 'name' => 'product_meta_keywords', 'id' => 'product_meta_keywords', 'rows' => '5', 'cols' => '280', 'value' => set_value('product_meta_keywords', isset($product['product_meta_keywords']) ? $product['product_meta_keywords'] : '') ) )?>
+                        <?php echo form_textarea( array( 'name' => 'product_meta_keywords', 'id' => 'product_meta_keywords', 'class' => 'input-xxlarge', 'rows' => '5', 'cols' => '280', 'value' => set_value('product_meta_keywords', isset($product['product_meta_keywords']) ? $product['product_meta_keywords'] : '') ) )?>
                         <span class="help-inline"><?php echo form_error('product_meta_keywords'); ?></span>
                     </div>
                 </div>
@@ -107,7 +107,7 @@ $id = isset($product['id']) ? $product['id'] : '';
                 <div class="control-group <?php echo form_error('product_url') ? 'error' : ''; ?>">
                     <?php echo form_label('URL', 'product_url', array('class' => "control-label") ); ?>
                     <div class='controls'>
-                        <input id="product_url" type="text" name="product_url" maxlength="255" value="<?php echo set_value('product_url', isset($product['product_url']) ? $product['product_url'] : ''); ?>"  />
+                        <input id="product_url" type="text" name="product_url" maxlength="255" class="input-xxlarge" value="<?php echo set_value('product_url', isset($product['product_url']) ? $product['product_url'] : ''); ?>"  />
                         <span class="help-inline"><?php echo form_error('product_url'); ?></span>
                     </div>
                 </div>
@@ -140,7 +140,7 @@ $id = isset($product['id']) ? $product['id'] : '';
                 <div class="control-group <?php echo form_error('product_price') ? 'error' : ''; ?>">
                     <?php echo form_label('Price'. lang('bf_form_label_required'), 'product_price', array('class' => "control-label") ); ?>
                     <div class='controls'>
-                        <input id="product_price" type="text" name="product_price" maxlength="13" value="<?php echo set_value('product_price', isset($product['product_price']) ? $product['product_price'] : ''); ?>"  />
+                        <input id="product_price" type="text" name="product_price" maxlength="13" class="input-xxlarge" value="<?php echo set_value('product_price', isset($product['product_price']) ? $product['product_price'] : ''); ?>"  />
                         <span class="help-inline"><?php echo form_error('product_price'); ?></span>
                     </div>
                 </div>
@@ -148,7 +148,7 @@ $id = isset($product['id']) ? $product['id'] : '';
                  <div class="control-group <?php echo form_error('product_special_price') ? 'error' : ''; ?>">
                     <?php echo form_label('Special Price', 'product_special_price', array('class' => "control-label") ); ?>
                     <div class='controls'>
-                        <input id="product_special_price" type="text" name="product_special_price" maxlength="13" value="<?php echo set_value('product_special_price', isset($product['product_special_price']) ? $product['product_special_price'] : ''); ?>"  />
+                        <input id="product_special_price" type="text" name="product_special_price" class="input-xxlarge" maxlength="13" value="<?php echo set_value('product_special_price', isset($product['product_special_price']) ? $product['product_special_price'] : ''); ?>"  />
                         <span class="help-inline"><?php echo form_error('product_special_price'); ?></span>
                     </div>
                 </div>
@@ -156,7 +156,7 @@ $id = isset($product['id']) ? $product['id'] : '';
                 <div class="control-group <?php echo form_error('product_special_price_from_date') ? 'error' : ''; ?>">
                     <?php echo form_label('Special Price From Date', 'product_special_price_from_date', array('class' => "control-label") ); ?>
                     <div class='controls'>
-                        <input id="product_special_price_from_date" type="text" name="product_special_price_from_date"  value="<?php echo set_value('product_special_price_from_date', isset($product['product_special_price_from_date']) ? $product['product_special_price_from_date'] : ''); ?>"  />
+                        <input id="product_special_price_from_date" type="text" class="input-xxlarge" name="product_special_price_from_date"  value="<?php echo set_value('product_special_price_from_date', isset($product['product_special_price_from_date']) ? $product['product_special_price_from_date'] : ''); ?>"  />
                         <span class="help-inline"><?php echo form_error('product_special_price_from_date'); ?></span>
                     </div>
                 </div>
@@ -164,7 +164,7 @@ $id = isset($product['id']) ? $product['id'] : '';
                 <div class="control-group <?php echo form_error('product_special_price_to_date') ? 'error' : ''; ?>">
                     <?php echo form_label('Special Price To Date', 'product_special_price_to_date', array('class' => "control-label") ); ?>
                     <div class='controls'>
-                        <input id="product_special_price_to_date" type="text" name="product_special_price_to_date"  value="<?php echo set_value('product_special_price_to_date', isset($product['product_special_price_to_date']) ? $product['product_special_price_to_date'] : ''); ?>"  />
+                        <input id="product_special_price_to_date" type="text" class="input-xxlarge" name="product_special_price_to_date"  value="<?php echo set_value('product_special_price_to_date', isset($product['product_special_price_to_date']) ? $product['product_special_price_to_date'] : ''); ?>"  />
                         <span class="help-inline"><?php echo form_error('product_special_price_to_date'); ?></span>
                     </div>
                 </div>
@@ -172,7 +172,7 @@ $id = isset($product['id']) ? $product['id'] : '';
                 <div class="control-group <?php echo form_error('product_cost') ? 'error' : ''; ?>">
                     <?php echo form_label('Cost'. lang('bf_form_label_required'), 'product_cost', array('class' => "control-label") ); ?>
                     <div class='controls'>
-                        <input id="product_cost" type="text" name="product_cost" maxlength="13" value="<?php echo set_value('product_cost', isset($product['product_cost']) ? $product['product_cost'] : ''); ?>"  />
+                        <input id="product_cost" type="text" name="product_cost" class="input-xxlarge" maxlength="13" value="<?php echo set_value('product_cost', isset($product['product_cost']) ? $product['product_cost'] : ''); ?>"  />
                         <span class="help-inline"><?php echo form_error('product_cost'); ?></span>
                     </div>
                 </div>
@@ -187,7 +187,7 @@ $id = isset($product['id']) ? $product['id'] : '';
                 <div class="control-group <?php echo form_error('qty') ? 'error' : ''; ?>">
                     <?php echo form_label('Quantity'. lang('bf_form_label_required'), 'qty', array('class' => "control-label") ); ?>
                     <div class='controls'>
-                        <input id="qty" type="text" name="qty" maxlength="11" value="<?php echo set_value('qty', isset($product['qty']) ? $product['qty'] : '0'); ?>"  />
+                        <input id="qty" type="text" name="qty" maxlength="11" class="input-xxlarge" value="<?php echo set_value('qty', isset($product['qty']) ? $product['qty'] : '0'); ?>"  />
                         <span class="help-inline"><?php echo form_error('qty'); ?></span>
                     </div>
                 </div>
@@ -195,7 +195,7 @@ $id = isset($product['id']) ? $product['id'] : '';
                 <div class="control-group <?php echo form_error('low_stock_qty') ? 'error' : ''; ?>">
                     <?php echo form_label('Low stock quantity'. lang('bf_form_label_required'), 'low_stock_qty', array('class' => "control-label") ); ?>
                     <div class='controls'>
-                        <input id="low_stock_qty" type="text" name="low_stock_qty" maxlength="11" value="<?php echo set_value('low_stock_qty', isset($product['low_stock_qty']) ? $product['low_stock_qty'] : '0'); ?>"  />
+                        <input id="low_stock_qty" type="text" name="low_stock_qty" class="input-xxlarge" maxlength="11" value="<?php echo set_value('low_stock_qty', isset($product['low_stock_qty']) ? $product['low_stock_qty'] : '0'); ?>"  />
                         <span class="help-inline"><?php echo form_error('low_stock_qty'); ?></span>
                     </div>
                 </div>
