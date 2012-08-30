@@ -73,7 +73,7 @@ class content extends Admin_Controller {
 		$records = $this->product_model->find_all();
 
 		Template::set('records', $records);
-		Template::set('toolbar_title', 'Manage Product');
+		Template::set('toolbar_title', 'Manage Products');
 		Template::render();
 	}
 
