@@ -254,10 +254,11 @@ class content extends Admin_Controller {
     		$this->upload->initialize($config);
 
     		//$response = array('success'=>true,'file'=>$_FILES);
-			if ( ! $this->upload->do_upload($file))
-				$response = array('error'=>$this->upload->display_errors());
-			else
-				$response = array('success'=>true,'image'=>$this->upload->data());
+			if ( ! $this->upload->do_upload($file)) {
+				$this->output->set_status_header('406');
+				$response = $this->upload->display_errors();
+			} else
+				$response = $this->upload->data();
 		}
 
 		echo json_encode($response);
