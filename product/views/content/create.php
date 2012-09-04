@@ -21,7 +21,7 @@ $id = isset($product['id']) ? $product['id'] : '';
 ?>
 <div class="admin-box">
     <h3>Product</h3>
-<?php echo form_open($this->uri->uri_string(), 'class="form-horizontal"'); ?>
+<?php echo form_open_multipart($this->uri->uri_string(), 'class="form-horizontal"'); ?>
 
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#general-tab">General</a></li>
@@ -127,10 +127,13 @@ $id = isset($product['id']) ? $product['id'] : '';
             <!-- Images -->
             <div class="tab-pane" id="media-tab">
 
-                <div id="dropbox">
-                    <input type="hidden" name="images_count" id="images_count" value=""/>
-                    <span class="message">Drop images here to upload.</span>
-                </div>
+                <ul id="file_list" style="display: none;">
+                    <!-- File data will be listed here -->
+                </ul>
+
+                <label for="file_input">Select Files:</label>
+                <input id="file_input" type="file" multiple>
+                <a title="Upload" id="upload_btn" class="disabled btn btn-success btn-mini">Upload</a>
 
             </div>
 

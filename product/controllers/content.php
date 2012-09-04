@@ -110,7 +110,8 @@ class content extends Admin_Controller {
 		}
 
 		Assets::add_module_css('product', 'product.css');
-		Assets::add_module_js('product', 'ajaxfileupload.js');
+		//Assets::add_module_js('product', 'fileuploader.js');
+		Assets::add_module_js('product', 'ajaxuploader.js');
 		Assets::add_module_js('product', 'product.js');
 		Assets::add_js($this->load->view('content/uploadjs', null, true), 'inline');
 
@@ -229,13 +230,15 @@ class content extends Admin_Controller {
 		$config['max_height'] = '600';
 		$config['encrypt_name'] = true;
 
-		// a little hack needed to make codeigniter accept multi-uploads
-		// see more here ->http://stackoverflow.com/questions/9903619/codeigniter-html5-trying-to-upload-multiple-images-at-once
+		$response 	=	array();
+
+		$this->upload->initialize($config);
+
 		$arr_files  =   @$_FILES['pics'];
 		$_FILES     =   array();
 		$response 	=	array();
 
-		foreach(array_keys($arr_files['name']) as $h)
+		foreach(array_keys($arr_files['name']) as $h) {
 			$_FILES["file_{$h}"] = array(
 										'name'		=>	$arr_files['name'][$h],
 										'type'      =>  $arr_files['type'][$h],
@@ -243,18 +246,18 @@ class content extends Admin_Controller {
 										'error'     =>  $arr_files['error'][$h],
 										'size'      =>  $arr_files['size'][$h]
 										);
-
+		}
 
 		foreach(array_keys($_FILES) as $file) {
 
     		// Initiate config on upload library etc.
     		$this->upload->initialize($config);
 
-    		//regular CI shit
-    		if ( ! $this->upload->do_upload($file))
-    			$response = array('status'=>'Something went wrong with your upload!','error'=>$this->upload->display_errors());
+    		//$response = array('success'=>true,'file'=>$_FILES);
+			if ( ! $this->upload->do_upload($file))
+				$response = array('error'=>$this->upload->display_errors());
 			else
-				$response = array('status'=>'File uploaded successfuly!','image'=>$this->upload->data());
+				$response = array('success'=>true,'image'=>$this->upload->data());
 		}
 
 		echo json_encode($response);

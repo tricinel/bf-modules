@@ -1,140 +1,67 @@
-<?php
-	$bool = array(1 => 'Yes',0 => 'No');
-?>
-
-$.jstree._themes = "<?php echo site_url('bonfire/themes/admin/images/jstree-themes').'/';?>";
-
 (function(){
-	
-	var dropbox = $('#dropbox'),
-		message = $('.message', dropbox),
-		count = 0;
+	/**
+	 * Utility method to format bytes into the most logical magnitude (KB, MB,
+	 * or GB).
+	 */
+	//Only add this implementation if one does not already exist.
+	if (Number.prototype.formatBytes==null) Number.prototype.formatBytes = function(){
+	   var units = ['B', 'KB', 'MB', 'GB', 'TB'],
+	        bytes = this,
+	        i;
 
-	dropbox.filedrop({
-		// The name of the $_FILES entry:
-		paramname:'pics[]',
-		
-		maxfiles: 5,
-    	maxfilesize: 2,
-		url: 'upload',
-		
-		uploadFinished:function(i,file,response){
-			$.data(file).addClass('done');
-			appendFormData(count,response);
-			count++;
-		},
-		
-    	error: function(err, file) {
-			switch(err) {
-				case 'BrowserNotSupported':
-					showMessage('Your browser does not support HTML5 file uploads!');
-					break;
-				case 'TooManyFiles':
-					alert('Too many files! Please select 5 at most! (configurable)');
-					break;
-				case 'FileTooLarge':
-					alert(file.name+' is too large! Please upload files up to 2mb (configurable).');
-					break;
-				default:
-					break;
-			}
-		},
-		
-		// Called before each upload is started
-		beforeEach: function(file){
-			if(!file.type.match(/^image\//)){
-				alert('Only images are allowed!');
-				
-				// Returning false will cause the
-				// file to be rejected
-				return false;
-			}
-		},
-		
-		uploadStarted:function(i, file, len){
-			var index = (i == '0' && count > 0) ? count : i;
-			console.log('count is '+count);
-			console.log('i is '+i);
-			console.log('index is '+index);
-			createImage(file,index);
-		},
-		
-		progressUpdated: function(i, file, progress) {
-			$.data(file).find('.progress').width(progress);
-		},
+	    for (i = 0; bytes >= 1024 && i < 4; i++) {
+	        bytes /= 1024;
+	    }
 
-		afterAll: function(){
-			$('input[name="images_count"]').val(count);
-			//set defaults
-			$('#image_0').find('input[name="image_is_default"]').attr('checked','checked');
-			$('#image_0').find('input[name="image_type_thumb"]').attr('checked','checked');
-			$('#image_0').find('input[name="image_type_small_image"]').attr('checked','checked');
-		}
-    	 
-	});
-	
-	var template = '<div class="control-group images-group">'+
-						'<div class="preview">'+
-							'<span class="imageHolder">'+
-								'<img />'+
-								'<span class="uploaded"></span>'+
-							'</span>'+
-							'<div class="progressHolder">'+
-								'<div class="progress"></div>'+
-							'</div>'+
-						'</div>'+
-					'</div>'; 
-	
-	
-	function createImage(file,i){
-
-		var preview = $(template), 
-			image = $('img', preview);
-
-		preview.attr('id','image_'+i);
-			
-		var reader = new FileReader();
-		
-		image.width = 100;
-		image.height = 100;
-		
-		reader.onload = function(e){
-			
-			// e.target.result holds the DataURL which
-			// can be used as a source of the image:
-			
-			image.attr('src',e.target.result);
-		};
-		
-		// Reading the file as a DataURL. When finished,
-		// this will trigger the onload function above:
-		reader.readAsDataURL(file);
-		
-		message.hide();
-		preview.appendTo(dropbox);
-		
-		// Associating a preview container
-		// with the file, using jQuery's $.data():
-		
-		$.data(file,preview);
+	    return bytes.toFixed(2) + units[i];
 	}
 
-	function showMessage(msg){
-		message.html(msg);
+	//Handle selected files
+	var file_input = $('#file_input'),
+	    file_list = $('#file_list'),
+	    upload_btn = $('#upload_btn'),
+	    uploaders = [];
+
+	file_input.on('change', onFilesSelected);
+
+	/**
+	 * Loops through the selected files, displays their file name and size
+	 * in the file list, and enables the submit button for uploading.
+	 */
+	function onFilesSelected(e) {
+	    var files = e.target.files,
+	    	file;
+
+	    for (var i = 0; i < files.length; i++) {
+	    	file = files[i];
+            uploaders.push(file);
+	    	file_list.append('<li>' + files[i].name + '(' + files[i].size.formatBytes() + ')</li>');
+	    }
+
+	    file_list.show();
+	    upload_btn.removeClass('disabled');
+	    upload_btn.attr('href','#');
+
+	    upload_btn.on('click',function(e){
+
+	        file_input.ajaxUploader({
+	        	url: 'http://127.0.0.1:8888/boardcoverz/manage/content/product/upload',
+	        	allowed_extensions: 'jpeg,jpg,gif,png',
+	        	uploadError: function(results){
+	        		console.log('error: ' + results);
+	        	},
+	        	uploadFinished: function(results){
+	        		console.log('success: ' + results);
+	        	}
+	        });
+
+
+	        // Prevent default form submission
+	        e.preventDefault();
+	    });
 	}
 
-	function appendFormData(i, data){
-
-		var file_name = data.image.file_name,
-			container = $('#image_'+i+''),
-			fields = '<div class="controls">'+
-						'<input id="image_src_'+i+'" type="hidden" name="image_src_'+i+'" value="'+file_name+'"  /><input id="is_default_'+i+'" type="hidden" name="is_default_'+i+'" value="0"/><input id="is_thumb_'+i+'" type="hidden" name="is_thumb_'+i+'" value="0"/><input id="is_small_image_'+i+'" type="hidden" name="is_small_image_'+i+'" value="0"/>'+
-						'<div><label>Image label:</label><input id="image_label_'+i+'" type="text" name="image_label_'+i+'" maxlength="250" value=""  /></div><div><label>Image position:</label><input id="image_position_'+i+'" type="text" name="image_position_'+i+'" maxlength="250" value=""  /></div><div><label>Default</label><input type="radio" name="image_is_default" value="default" onclick="setImageProperty(\'is_default_\','+i+')"></div><div><label>Thumb</label><input type="radio" name="image_type_thumb" value="thumb" onclick="setImageProperty(\'is_thumb_\','+i+')"></div><div><label>Small</label><input type="radio" name="image_type_small_image" value="small_image" onclick="setImageProperty(\'is_small_image_\','+i+')"></div>'+
-						'<div class="actions"><a id="delete-image" class="btn btn-danger" href="#" onclick="deleteImage(\''+i+'\',\''+file_name+'\')"><i class="icon-trash icon-white"></i> Delete</a></div>'+
-					'</div>';
-
-		container.append(fields);
-
+	function ajaxUpload(file){
+		console.log(file);
 	}
-
 })();
