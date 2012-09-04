@@ -21,6 +21,7 @@ if ( typeof Object.create !== 'function' ) {
 			self.elem.files.length = self.elem.files.length;
 			self.allowed_extensions = self.allowedExtensions();
 			self.$file_list = $( self.options.container );
+			self._stored_files = [];
 
 			self.beforeUpload();
 		},
@@ -55,37 +56,46 @@ if ( typeof Object.create !== 'function' ) {
 			if(errors && errors.length > 0) {
 				self.options.error(errors.join("<br/>"));
 			} else {
-				self.uploadStarted();
+				self.storeFilesForUpload();
 			}
 		},
 
-		uploadStarted: function() {
+		storeFilesForUpload: function() {
 			var self = this, i = 0;
 
 			self.$file_list.empty();
 
 			for(i;i<self.elem.files.length;i++){
-				file = self.files[i];
-				self.upload(file, i)
-					.done(function( results ) {
-						//upload was successful
-						if ( typeof self.options.uploadFinished === 'function' ) {
-							self.options.uploadFinished.apply( self.elem, arguments );
-						}
-						//attach file to list of files uploaded
-						//self.appendFileToList(file);
-
-					})
-					.fail(function( results ) {
-						//upload failed
-						if ( typeof self.options.uploadError === 'function' ) {
-							self.options.uploadError.apply( self.elem, arguments );
-						}
-					});
+				self._stored_files.push(self.files[i]);
 			}
+
+			self.startUpload();
 		},
 
-		upload: function(file, i) {
+		startUpload: function() {
+			var self = this;
+
+			$.each(self._stored_files, function() {
+				self.upload(this);
+			});
+		},
+
+		uploadProgress: function(e) {
+          	var percentComplete = Math.round(e.loaded * 100 / e.total);
+          	console.log(percentComplete.toString() + '%');
+		},
+
+		uploadComplete: function(response) {
+			var file = $.parseJSON(response);
+			this.appendFileToList(file);
+		},
+
+		uploadFailed: function(response) {
+			var error = $.parseJSON(response);
+			console.log(error);
+		},
+
+		upload: function(file) {
 			var self = this, formdata = false;
 			if (window.FormData) {
         		formdata = new FormData();
@@ -93,20 +103,32 @@ if ( typeof Object.create !== 'function' ) {
     		}
 
 			if (formdata) {
-			    return $.ajax({
-			        url: self.options.url,
-			        type: "POST",
-			        data: formdata,
-			        processData: false,
-			        contentType: false
-			    });
+        		var xhr = XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+
+        		xhr.open("POST", self.options.url);
+
+  				xhr.onreadystatechange = function(){
+    				if ( xhr.readyState == 4 ) {
+      					if ( xhr.status == 200 ) {
+    						self.uploadComplete(xhr.responseText);
+      					} else {
+    						self.uploadFailed(xhr.responseText);
+      					}
+    				}
+  				};
+
+        		xhr.upload.onprogress = function(e){
+					if (xhr.readyState == 200 && xhr.status == 200 && e.lengthComputable){
+						self.uploadProgress(e);
+					}
+				};
+
+        		xhr.send(formdata);
 			}
 		},
 
 		appendFileToList: function(file) {
-			var self = this;
-			console.log(file);
-			//self.$file_list.append('<li>Uploaded: ' + file.name + '</li>');
+			this.$file_list.append('<li>Uploaded: ' + file.file_name + '</li>');
 		},
 
 	};
