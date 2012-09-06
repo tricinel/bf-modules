@@ -256,7 +256,7 @@ class content extends Admin_Controller {
     		//$response = array('success'=>true,'file'=>$_FILES);
 			if ( ! $this->upload->do_upload($file)) {
 				$this->output->set_status_header('406');
-				$response = $this->upload->display_errors();
+				$response = array('error' => $this->upload->display_errors('',''), 'file' => $_FILES[$file]);
 			} else
 				$response = $this->upload->data();
 		}

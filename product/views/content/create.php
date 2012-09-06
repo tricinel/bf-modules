@@ -127,13 +127,25 @@ $id = isset($product['id']) ? $product['id'] : '';
             <!-- Images -->
             <div class="tab-pane" id="media-tab">
 
-                <ul id="file_list" style="display: none;">
-                    <!-- File data will be listed here -->
+                <ul id="upload_list">
+                   <!-- Files being uploaded will be listed here -->
                 </ul>
 
-                <label for="file_input">Select Files:</label>
-                <input id="file_input" type="file" multiple>
-                <a title="Upload" id="upload_btn" class="disabled btn btn-success btn-mini">Upload</a>
+                <div class="control-group">
+                    <div class="control-label"><label for="file_input">Browse images:</label></div>
+                    <div class="controls"><input id="file_input" type="file" multiple></div>
+                </div>
+
+                <div id="file_list" class="control-group">
+                    <div class="control-label"><label>Images to upload</label></div>
+                    <div class="controls">
+                        <ul><!-- Files to be uploaded will be listed here --></ul>
+                        <p>
+                            <a title="Start upload" id="upload_btn" class="disabled btn btn-success btn-mini">Start upload</a>
+                            <a title="Cancel" id="cancel_btn" class="disabled btn btn-danger btn-mini">Cancel upload</a>
+                        </p>
+                    </div>
+                </div>
 
             </div>
 
