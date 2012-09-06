@@ -78,7 +78,8 @@ if (Number.prototype.formatBytes == null) {
 
 			for(i;i<this.elem.files.length;i++){
 				this._stored_files.push(this.files[i]);
-				this.appendFileToList(this.files[i]);
+				this.$file_list.append('<li>'+ this.files[i].name + ' '+ this.files[i].size.formatBytes() +'</li>');
+				//this.appendFileToList(this.files[i]);
 			}
 
 			//start upload on button click
@@ -115,12 +116,7 @@ if (Number.prototype.formatBytes == null) {
 
   				xhr.onreadystatechange = function(){
     				if ( xhr.readyState == 4 ) {
-    					//self.handleUploadResult(xhr.responseText);
-      					if ( xhr.status == 200 ) {
-    						self.uploadComplete(xhr.responseText,file);
-      					} else {
-    						self.uploadFailed(xhr.responseText,file);
-      					}
+    					self.uploadResult(xhr,file);
     				}
   				};
 
@@ -134,50 +130,33 @@ if (Number.prototype.formatBytes == null) {
 
 		uploadProgress: function(e,file) {
           	var percentComplete = Math.round(e.loaded * 100 / e.total), id = this.generateFileID();
-          	console.log(file);
           	this.$file_list.append('<li id="'+ file.file_id +'"><span class="file_name">'+ file.name +'</span><div class="progress progress-striped active pull-right"><div class="bar bar-success" style="width:'+percentComplete.toString()+'%"></div></div></li>');
 		},
 
-		uploadComplete: function(response,file) {
-			var data = $.parseJSON(response), curr = this.$file_list.find('li#'+file.file_id+'');
-
-			curr.children('div.progress').removeClass('progress-striped').addClass('progress-success');
-			curr.children('span.file_name').html('Successfully uploaded' + data.client_name).closest('li.curr').removeClass('curr');
+		uploadResult: function(xhr,file) {
+			var data = $.parseJSON(xhr.responseText),
+				curr = this.$file_list.find('li#'+file.file_id+''),
+				self = this;
 
 			this._queue++;
 
-			var self = this;
+			//did we get an error uploading?
+			if(data.error) {
+				curr.children('div.progress').removeClass('progress-striped').addClass('progress-danger');
+				curr.children('span.file_name').html('Failed to upload ' + file.name).closest('li.curr').removeClass('curr'); //TODO include data.error server response
+
+				if(typeof this.options.uploadError === 'function') {
+					this.options.uploadError.apply( self.elem, [data.error] );
+				}
+			} else {
+				curr.children('div.progress').removeClass('progress-striped').addClass('progress-success');
+				curr.children('span.file_name').html('Successfully uploaded ' + data.client_name).closest('li.curr').removeClass('curr');
+			}
 
 			if(this._queue == this._stored_files.length && typeof this.options.uploadFinished === 'function') {
 				this.options.uploadFinished.apply( self.elem, arguments );
 			}
-		},
 
-		uploadFailed: function(response,file) {
-			this.appendFileToList($.parseJSON(response));
-
-			this._queue++;
-
-			var self = this;
-
-			if(this._queue == this._stored_files.length && typeof this.options.uploadFinished === 'function') {
-				this.options.uploadFinished.apply( self.elem, arguments );
-			}
-
-			if(typeof this.options.uploadError === 'function') {
-				this.options.uploadError.apply( self.elem, arguments );
-			}
-		},
-
-		appendFileToList: function(data) {
-			this.$file_list.append('<li>'+ data.name + ' '+ data.size.formatBytes() +'</li>');
-
-			// if(data.error) {
-			// 	this.$file_list.append('<li class="error">Failed to upload ' + data.file.name + '<span class="pull-right">' + data.error + '</span></li>');
-			// } else {
-			// 	this.$file_list.append('<li>Successfully uploaded ' + data.client_name + '</li>');
-			// }
-			// if ( this.$file_list.is(':hidden')) this.$file_list.show();
 		},
 
 		allowedExtensions: function(){
@@ -232,6 +211,7 @@ if (Number.prototype.formatBytes == null) {
 	 * TODO
 
 		1. auto-upload feature: upload files on select, without the need for an upload button
+		2. add type of progress: graphic/numbers
 
 	**/
 

@@ -71,7 +71,7 @@
         		upload_btn.removeClass('disabled').attr('href','#');
         	},
         	uploadError: function(results){
-        		console.log('error: ' + results);
+        		console.log(results);
         	},
         	uploadFinished: function(){
         		console.log('Upload finished');
