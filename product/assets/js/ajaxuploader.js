@@ -102,6 +102,7 @@ if (Number.prototype.formatBytes == null) {
 
 		upload: function(file) {
 			var self = this, formdata = false;
+			file.file_id = this.generateFileID();
 			if (window.FormData) {
         		formdata = new FormData();
         		formdata.append("pics[]", file);
@@ -116,9 +117,9 @@ if (Number.prototype.formatBytes == null) {
     				if ( xhr.readyState == 4 ) {
     					//self.handleUploadResult(xhr.responseText);
       					if ( xhr.status == 200 ) {
-    						self.uploadComplete(xhr.responseText);
+    						self.uploadComplete(xhr.responseText,file);
       					} else {
-    						self.uploadFailed(xhr.responseText);
+    						self.uploadFailed(xhr.responseText,file);
       					}
     				}
   				};
@@ -132,13 +133,13 @@ if (Number.prototype.formatBytes == null) {
 		},
 
 		uploadProgress: function(e,file) {
-			//li.curr not working TODO
           	var percentComplete = Math.round(e.loaded * 100 / e.total), id = this.generateFileID();
-          	this.$file_list.append('<li class="curr"><span class="file_name">'+ file.name +'</span><div class="progress progress-striped active pull-right"><div class="bar bar-success" style="width:'+percentComplete.toString()+'%"></div></div></li>');
+          	console.log(file);
+          	this.$file_list.append('<li id="'+ file.file_id +'"><span class="file_name">'+ file.name +'</span><div class="progress progress-striped active pull-right"><div class="bar bar-success" style="width:'+percentComplete.toString()+'%"></div></div></li>');
 		},
 
-		uploadComplete: function(response) {
-			var data = $.parseJSON(response), curr = this.$file_list.find('li.curr');
+		uploadComplete: function(response,file) {
+			var data = $.parseJSON(response), curr = this.$file_list.find('li#'+file.file_id+'');
 
 			curr.children('div.progress').removeClass('progress-striped').addClass('progress-success');
 			curr.children('span.file_name').html('Successfully uploaded' + data.client_name).closest('li.curr').removeClass('curr');
@@ -152,7 +153,7 @@ if (Number.prototype.formatBytes == null) {
 			}
 		},
 
-		uploadFailed: function(response) {
+		uploadFailed: function(response,file) {
 			this.appendFileToList($.parseJSON(response));
 
 			this._queue++;
