@@ -373,7 +373,6 @@ class content extends Admin_Controller {
 				$image_src = $this->input->post('image_src_'.$i);
 				if(!empty($image_src)) {//check if image exists
 					$image['image_path'] = 'media/catalog/'.$this->input->post('image_src_'.$i);
-					$image['image_position'] = $this->replaceifempty($this->input->post('image_position_'.$i),'0');
 					$image['image_is_default'] = $this->input->post('is_default_'.$i);
 					$image['image_is_thumb'] = $this->input->post('is_thumb_'.$i);
 					$image['image_is_small_image'] = $this->input->post('is_small_image_'.$i);

@@ -28,3 +28,21 @@
 #file_list ul li.error {
 	color:red;
 }
+
+#images {
+	width:93%;
+	margin:0 auto;
+	margin-bottom:30px;
+}
+
+#upload_list {
+	border-bottom:1px solid #E5E5E5;
+}
+
+#images tr td {
+	text-align:center;
+}
+
+#images img {
+	border:1px solid #E5E5E5;
+}

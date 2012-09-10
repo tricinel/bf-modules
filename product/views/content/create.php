@@ -127,9 +127,34 @@ $id = isset($product['id']) ? $product['id'] : '';
             <!-- Images -->
             <div class="tab-pane" id="media-tab">
 
-                <ul id="upload_list">
-                   <!-- Files being uploaded will be listed here -->
-                </ul>
+                <div id="upload_list">
+                    <!-- some hidden input fields -->
+                    <input type="hidden" name="images_count" value="0"/>
+
+                    <table id="images" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <td>Preview</td>
+                                <td>Label</td>
+                                <td>Set as thumbnail</td>
+                                <td>Set as small image</td>
+                                <td>Set as default</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td><input type="radio" name="is_thumb" value="1" onclick="setImageProperty(this)" checked></td>
+                                <td><input type="radio" name="is_small_image" value="1" onclick="setImageProperty(this)" checked></td>
+                                <td><input type="radio" name="is_default" value="1" onclick="setImageProperty(this)" checked></td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <!-- Files uploaded will be listed here -->
+                        </tbody>
+                    </table>
+                </div>
 
                 <div class="control-group">
                     <div class="control-label"><label for="file_input">Browse images:</label></div>

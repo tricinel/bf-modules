@@ -61,13 +61,16 @@ function deleteImage(index,file_name){
 
 
 //function sets default, thumb, small_image, large_image values
-function setImageProperty(field_name,index){
-	var container = $('#dropbox').find('.controls'),
-		allFields = container.find('input[name^="'+field_name+'"]'),
-		activeField = container.find('input[name="'+field_name+index+'"]');
+function setImageProperty(el){
+	var container = $('#upload_list'),
+		name = el.getAttribute('name'),
+		allFields = container.find('input[name^="'+name+'"]');
 
 	allFields.val(0);
-	activeField.val(1);
+	el.setAttribute("value", "1");
+
+	console.log(allFields);
+
 	return false;
 }
 
