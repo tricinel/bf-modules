@@ -41,7 +41,27 @@ if (Number.prototype.formatBytes == null) {
 			self._stored_files = [];
 			self._queue = 0; //add files to it as they are uploaded or they fail to upload
 
+			//bind actions
+			self.bindAll();
+		},
+
+		bindAll: function(){
+			var self = this;
+
+			//detect file input changes
 			self.$elem.on('change', $.proxy( self.onFilesSelected, self ));
+
+			//start upload on button click
+			self.options.upload_btn.on('click',function(e){
+				self.$file_list.empty();
+				self.startUpload(); //start the upload
+				e.preventDefault();
+			});
+
+			//TODO - cancel upload
+			self.options.cancel_btn.on('click',function(e){
+				e.preventDefault();
+			});
 		},
 
 		onFilesSelected: function() {
@@ -56,6 +76,7 @@ if (Number.prototype.formatBytes == null) {
 		},
 
 		beforeUpload: function(){
+			//TODO - turn this into a beforeEach
 			var self = this, errors = [];
 			if(self.elem.files.length > self.options.maxfiles) {
 				errors.push('You\'re trying to upload too many files!');
@@ -79,17 +100,7 @@ if (Number.prototype.formatBytes == null) {
 			for(i;i<this.elem.files.length;i++){
 				this._stored_files.push(this.files[i]);
 				this.$file_list.append('<li>'+ this.files[i].name + ' '+ this.files[i].size.formatBytes() +'</li>');
-				//this.appendFileToList(this.files[i]);
 			}
-
-			//start upload on button click
-			this.options.upload_btn.on('click',function(e){
-				self.$file_list.empty();
-				self.startUpload(); //start the upload
-				e.preventDefault();
-			});
-
-			//TODO - cancel upload
 		},
 
 		startUpload: function() {
@@ -136,7 +147,8 @@ if (Number.prototype.formatBytes == null) {
 		uploadResult: function(xhr,file) {
 			var data = $.parseJSON(xhr.responseText),
 				curr = this.$file_list.find('li#'+file.file_id+''),
-				self = this;
+				self = this,
+				results = [];
 
 			this._queue++;
 
@@ -145,18 +157,21 @@ if (Number.prototype.formatBytes == null) {
 				curr.children('div.progress').removeClass('progress-striped').addClass('progress-danger');
 				curr.children('span.file_name').html('Failed to upload ' + file.name).closest('li.curr').removeClass('curr'); //TODO include data.error server response
 
-				if(typeof this.options.uploadError === 'function') {
-					this.options.uploadError.apply( self.elem, [data.error] );
-				}
+				results.push(data.error);
 			} else {
 				curr.children('div.progress').removeClass('progress-striped').addClass('progress-success');
 				curr.children('span.file_name').html('Successfully uploaded ' + data.client_name).closest('li.curr').removeClass('curr');
+
+				results.push(data,file.file_id);
+			}
+
+			if(typeof this.options.afterEach === 'function') {
+				this.options.afterEach.apply( self.elem, results );
 			}
 
 			if(this._queue == this._stored_files.length && typeof this.options.uploadFinished === 'function') {
-				this.options.uploadFinished.apply( self.elem, arguments );
+				this.options.uploadFinished.apply( self.elem );
 			}
-
 		},
 
 		allowedExtensions: function(){
@@ -201,9 +216,10 @@ if (Number.prototype.formatBytes == null) {
 		allowed_extensions: null,
 		container: '#file_list',
 		upload_btn: '#upload_btn',
+		cancel_btn: '#cancel_btn',
 		onFilesSelect: null,
-		uploadError: null,
 		progressUpdated: null,
+		afterEach: null,
 		uploadFinished: null
 	};
 
