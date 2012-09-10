@@ -110,7 +110,6 @@ class content extends Admin_Controller {
 		}
 
 		Assets::add_module_css('product', 'product.css');
-		//Assets::add_module_js('product', 'fileuploader.js');
 		Assets::add_module_js('product', 'ajaxuploader.js');
 		Assets::add_module_js('product', 'product.js');
 		Assets::add_js($this->load->view('content/uploadjs', null, true), 'inline');
@@ -364,12 +363,11 @@ class content extends Admin_Controller {
 
 		//images data
 		$imgCount = $this->input->post('images_count');
-		$max_images = 5;//same number of maximum images as in uploadjs.php
 		$i = 0;
 
 		if(isset($imgCount) && $imgCount > $i) {
 			$image['product_sku'] = $this->input->post('product_sku');
-			for($i;$i<$max_images;$i++){
+			for($i;$i<$imgCount;$i++){
 				$image_src = $this->input->post('image_src_'.$i);
 				if(!empty($image_src)) {//check if image exists
 					$image['image_path'] = 'media/catalog/'.$this->input->post('image_src_'.$i);

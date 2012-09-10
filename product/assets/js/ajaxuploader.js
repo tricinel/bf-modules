@@ -172,6 +172,10 @@ if (Number.prototype.formatBytes == null) {
 			if(this._queue == this._stored_files.length && typeof this.options.uploadFinished === 'function') {
 				this.options.uploadFinished.apply( self.elem );
 			}
+
+			if(this._queue == this._stored_files.length) {
+				this.destroy();
+			}
 		},
 
 		allowedExtensions: function(){
@@ -198,6 +202,11 @@ if (Number.prototype.formatBytes == null) {
 			}
 
 			return id;
+		},
+
+		destroy: function() {
+			this._stored_files = [];
+			this._queue = 0;
 		},
 
 	};

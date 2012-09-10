@@ -37,30 +37,7 @@
 
 })();
 
-//function to delete an image
-function deleteImage(index,file_name){
-	var container = $('#image_'+index+''),
-		images_count = $('input[name="images_count"]'),
-		count = images_count.val();
-
-	$.ajax({
-		url: 'delete_image',
-		type: 'POST',
-		data: { file_name: file_name }
-	}).done(function() {
-		//replace this alert with a bootstrap alert
-		alert('Image deleted!');
-		container.empty().remove();
-		count--;
-		images_count.val(count);
-		if(count == '0') $('span.message').show();
-	});
-
-	return false;
-}
-
-
-//function sets default, thumb, small_image, large_image values
+//function sets default, thumb, small_image
 function setImageProperty(el){
 	var container = $('#upload_list'),
 		name = el.getAttribute('name'),
@@ -68,8 +45,6 @@ function setImageProperty(el){
 
 	allFields.val(0);
 	el.setAttribute("value", "1");
-
-	console.log(allFields);
 
 	return false;
 }
