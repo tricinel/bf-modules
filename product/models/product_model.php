@@ -54,7 +54,7 @@ class Product_model extends BF_Model {
 
 		//delete images from folder
 		if($product_images) {
-			foreach($product_images as $img)
+			foreach($product_images->image_path as $img)
 			{
 				if (file_exists($img)) unlink($img);
 			}
@@ -71,7 +71,7 @@ class Product_model extends BF_Model {
 		if($q->num_rows() > 0) {
 			foreach($q->result() as $row)
 			{
-				$data[] = $row->image_path;
+				$data[] = $row;
 			}
 
 			return $data;
@@ -89,20 +89,5 @@ class Product_model extends BF_Model {
 		}
 
 		return false;
-	}
-
-	public function getSKU($id)
-	{
-		$q = $this->db->get_where('product', array('id' => $id));
-
-		if($q->num_rows() == 1)
-		{
-			$row = $q->row();
-
-			$data = $row->product_sku;
-			return $data;
-		}
-
-		return FALSE;
 	}
 }

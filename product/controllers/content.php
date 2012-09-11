@@ -164,7 +164,7 @@ class content extends Admin_Controller {
 		Template::set('images', $this->product_model->getImages($product_sku));
 
 		Assets::add_module_css('product', 'product.css');
-		Assets::add_module_js('product', 'ajaxfileupload.js');
+		Assets::add_module_js('product', 'ajaxuploader.js');
 		Assets::add_module_js('product', 'product.js');
 		Assets::add_js($this->load->view('content/uploadjs', null, true), 'inline');
 
@@ -275,7 +275,10 @@ class content extends Admin_Controller {
 		$directory_path = 'media/catalog/';
 		$file_name = $_POST['file_name'];
 
-		unlink($directory_path.$file_name);
+		if(unlink($directory_path.$file_name)) {
+			//delete db field, if any
+			$this->db->delete('product_media', array('image_path' => $file_name));
+		}
 		exit;
 	}
 
@@ -370,7 +373,7 @@ class content extends Admin_Controller {
 			for($i;$i<$imgCount;$i++){
 				$image_src = $this->input->post('image_src_'.$i);
 				if(!empty($image_src)) {//check if image exists
-					$image['image_path'] = 'media/catalog/'.$this->input->post('image_src_'.$i);
+					$image['image_path'] = $this->input->post('image_src_'.$i);
 					$image['image_is_default'] = $this->input->post('is_default_'.$i);
 					$image['image_is_thumb'] = $this->input->post('is_thumb_'.$i);
 					$image['image_is_small_image'] = $this->input->post('is_small_image_'.$i);
