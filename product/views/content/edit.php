@@ -115,11 +115,79 @@ $id = isset($product['id']) ? $product['id'] : '';
             <!-- Images -->
             <div class="tab-pane" id="media-tab">
 
-                <?php print_r($images)?>
+                <div id="upload_list">
+                    <!-- some hidden input fields -->
+                    <input type="hidden" name="images_count" value="<?php echo isset($images) ? count($images) : '0'?>"/>
 
-                <div id="dropbox">
-                    <input type="hidden" name="images_count" id="images_count" value=""/>
-                    <span class="message">Drop images here to upload.</span>
+                    <table id="images" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <td>Preview</td>
+                                <td>Label</td>
+                                <td>Set as thumbnail</td>
+                                <td>Set as small image</td>
+                                <td>Set as default</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td><input type="radio" name="is_thumb" value="1" onclick="setImageProperty(this)" checked></td>
+                                <td><input type="radio" name="is_small_image" value="1" onclick="setImageProperty(this)" checked></td>
+                                <td><input type="radio" name="is_default" value="1" onclick="setImageProperty(this)" checked></td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <?php if(isset($images) && is_array($images) && count($images) > 0) :
+                                $i = 0;
+                                foreach($images as $image):?>
+                            <tr id="image_<?php echo $i?>" data-index="<?php echo $i?>">
+                                <td>
+                                    <input type="hidden" name="image_src_<?php echo $i?>" value="<?php echo $image->image_path?>"/>
+                                    <input type="hidden" name="is_thumb_<?php echo $i?>" value="<?php echo $image->image_is_thumb?>"/>
+                                    <input type="hidden" name="is_small_image_<?php echo $i?>" value="<?php echo $image->image_is_small_image?>"/>
+                                    <input type="hidden" name="is_default_<?php echo $i?>" value="<?php echo $image->image_is_default?>"/>
+                                    <img src="<?php echo site_url("images/".$image->image_path."?assets=media/catalog&size=50")?>"/>
+                                </td>
+                                <td>
+                                    <input type="text" name="image_label_<?php echo $i?>" class="input-large" value="<?php echo $image->image_label?>"/>
+                                </td>
+                                <td>
+                                    <input type="radio" name="is_thumb" value="<?php echo $image->image_is_thumb?>" onclick="setImageProperty(this)" <?php echo ($image->image_is_thumb) ? 'checked' : ''?>>
+                                </td>
+                                <td>
+                                    <input type="radio" name="is_small_image" value="<?php echo $image->image_is_small_image?>" onclick="setImageProperty(this)" <?php echo ($image->image_is_small_image) ? 'checked' : ''?>>
+                                </td>
+                                <td>
+                                    <input type="radio" name="is_default" value="<?php echo $image->image_is_default?>" onclick="setImageProperty(this)" <?php echo ($image->image_is_default) ? 'checked' : ''?>>
+                                </td>
+                                <td>
+                                    <a href="#" title="Delete" class="btn btn-danger remove"><i class="icon-trash icon-white"></i></a>
+                                </td>
+                            </tr>
+                                <?php $i++;
+                                endforeach;
+                            endif;?>
+                            <!-- Files uploaded will be listed here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label"><label for="file_input">Browse images:</label></div>
+                    <div class="controls"><input id="file_input" type="file" multiple></div>
+                </div>
+
+                <div id="file_list" class="control-group">
+                    <div class="control-label"><label>Images to upload</label></div>
+                    <div class="controls">
+                        <ul><!-- Files to be uploaded will be listed here --></ul>
+                        <p>
+                            <a title="Start upload" id="upload_btn" class="disabled btn btn-success btn-mini">Start upload</a>
+                            <a title="Cancel" id="cancel_btn" class="disabled btn btn-danger btn-mini">Cancel upload</a>
+                        </p>
+                    </div>
                 </div>
 
             </div>
