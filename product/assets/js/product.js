@@ -40,11 +40,13 @@
 //function sets default, thumb, small_image
 function setImageProperty(el){
 	var container = $('#upload_list'),
-		name = el.getAttribute('name'),
+		name = $(el).attr('name'),
+		index = $(el).closest('tr').data('index'),
+		field = container.find('input[name="'+name+'_'+index+'"]');
 		allFields = container.find('input[name^="'+name+'"]');
 
 	allFields.val(0);
-	el.setAttribute("value", "1");
+	field.val(1);
 
 	return false;
 }

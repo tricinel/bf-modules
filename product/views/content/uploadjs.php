@@ -34,8 +34,8 @@
 
 	function appendImageToForm(file_name) {
 		var i = current_image.val(),
-			image_container = $('<tr/>').attr('id','#image_'+i+''),
-			table_fields = '<td><input type="hidden" name="image_src_'+i+'" value="'+file_name+'"/><img src="<?php echo site_url("images/'+file_name+'?assets=media/catalog&size=50")?>"/></td><td><input type="text" name="image_label_'+i+'" class="input-large" value=""/></td><td><input type="radio" name="is_thumb" value="0" onclick="setImageProperty(this)"></td><td><input type="radio" name="is_small_image" value="0" onclick="setImageProperty(this)"></td><td><input type="radio" name="is_default" value="0" onclick="setImageProperty(this)"></td><td><a href="#" title="Delete" class="btn btn-danger remove"><i class="icon-trash icon-white"></i></td>';
+			image_container = $('<tr/>').attr('id','#image_'+i+'').attr('data-index',i),
+			table_fields = '<td><input type="hidden" name="image_src_'+i+'" value="'+file_name+'"/><input type="hidden" name="is_thumb_'+i+'" value="0"/><input type="hidden" name="is_small_image_'+i+'" value="0"/><input type="hidden" name="is_default_'+i+'" value="0"/><img src="<?php echo site_url("images/'+file_name+'?assets=media/catalog&size=50")?>"/></td><td><input type="text" name="image_label_'+i+'" class="input-large" value=""/></td><td><input type="radio" name="is_thumb" value="0" onclick="setImageProperty(this)"></td><td><input type="radio" name="is_small_image" value="0" onclick="setImageProperty(this)"></td><td><input type="radio" name="is_default" value="0" onclick="setImageProperty(this)"></td><td><a href="#" title="Delete" class="btn btn-danger remove"><i class="icon-trash icon-white"></i></td>';
 
 		i++;
 		current_image.val(i);
