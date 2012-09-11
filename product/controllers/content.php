@@ -337,15 +337,15 @@ class content extends Admin_Controller {
 		$product_name                            = $this->input->post('product_name');
 
 		//check if new url is unique
-		$url 									 = strtolower($this->replaceifempty($product_url,url_title($product_name)));
-		$url                                     = ($this->product_model->is_unique('product_url', $url)) ? $url : $url.rand(1, 99);
+		$url 									 = $product_url ? strtolower($product_url) : strtolower(url_title($product_name));
+		$url                                     = ($this->product_model->is_unique('product_url', $url)) ? $url : $url.'-'.rand(1, 99);
 
 		$data                                    = array();
 		$data['product_sku']                     = $this->input->post('product_sku');
 		$data['product_price']                   = $this->input->post('product_price');
-		$data['product_special_price']           = $this->replaceifempty($this->input->post('product_special_price'),null);
-		$data['product_special_price_from_date'] = $this->replaceifempty($this->input->post('product_special_price_from_date'),null);
-		$data['product_special_price_to_date']   = $this->replaceifempty($this->input->post('product_special_price_to_date'),null);
+		$data['product_special_price']           = $this->input->post('product_special_price') ? $this->input->post('product_special_price') : null;
+		$data['product_special_price_from_date'] = $this->input->post('product_special_price_from_date') ? $this->input->post('product_special_price_from_date') : null;
+		$data['product_special_price_to_date']   = $this->input->post('product_special_price_to_date') ? $this->input->post('product_special_price_to_date') : null;
 		$data['product_cost']                    = $this->input->post('product_cost');
 		$data['product_name']                    = $product_name;
 		$data['product_description']             = $this->input->post('product_description');
@@ -417,28 +417,6 @@ class content extends Admin_Controller {
 
 	//--------------------------------------------------------------------
 
-	// Helper functions
 
-	//--------------------------------------------------------------------
-
-	/*
-		Method: replaceifempty($segment_to_be_replaced,$segment_to_replace)
-
-		Creates a web-friendly version of a string by eliminating spaces and other characters
-
-		Parameters:
-			$segment_to_be_replaced	- the string to be checked if is empty and replace on true
-			$segment_to_replace - the string to replace
-
-		Returns:
-			A string
-	*/
-
-	private function replaceifempty($segment_to_be_replaced,$segment_to_replace)
-	{
-		return (empty($segment_to_be_replaced)) ? $segment_to_replace : $segment_to_be_replaced;
-	}
-
-	//--------------------------------------------------------------------
 
 }
