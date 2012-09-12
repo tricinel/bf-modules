@@ -237,6 +237,7 @@ if (Number.prototype.formatBytes == null) {
 
 		1. auto-upload feature: upload files on select, without the need for an upload button
 		2. add type of progress: graphic/numbers
+		3. add progressUpdated function
 
 	**/
 
