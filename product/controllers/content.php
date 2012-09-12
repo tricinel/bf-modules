@@ -49,9 +49,7 @@ class content extends Admin_Controller {
 					$result = FALSE;
 					foreach ($checked as $pid)
 					{
-						$product_sku = $product_sku = $this->product_model->get_field($pid, 'product_sku');
-						$product_images = $this->product_model->getImages($product_sku);
-						$result = $this->product_model->deleteProduct($pid,$product_sku,$product_images);
+						$result = $this->product_model->delete($pid);
 					}
 
 					if ($result)
@@ -99,8 +97,7 @@ class content extends Admin_Controller {
 
 				$this->activity_model->log_activity($this->current_user->id, lang('product_act_create_record').': ' . $insert_id . ' : ' . $this->input->ip_address(), 'product');
 
-				$message = '<h4>' . lang('product_create_success') . '</h4><br/><p>Product catalog needs to be updated! Every time you enter a new product, it is necessary that you upgrade your SEO friendly URLs.</p><p><a href="" class="btn btn-success">Update catalog now</a></p>';
-				Template::set_message($message, 'success');
+				Template::set_message(lang('product_create_success'), 'success');
 				Template::redirect(SITE_AREA .'/content/product');
 			}
 			else
@@ -189,9 +186,7 @@ class content extends Admin_Controller {
 
 		if (!empty($id))
 		{
-			$product_sku = $this->product_model->get_field($id, 'product_sku');
-			$product_images = $this->product_model->getImages($product_sku);
-			$result = $this->product_model->deleteProduct($id,$product_sku,$product_images);
+			$result = $this->product_model->delete($id);
 
 			if ($result)
 			{
@@ -272,14 +267,15 @@ class content extends Admin_Controller {
 	*/
 	public function delete_image()
 	{
-		$directory_path = 'media/catalog/';
+		$catalog = 'media/catalog/';
 		$file_name = $_POST['file_name'];
 
-		if(unlink($directory_path.$file_name)) {
+		if(unlink($catalog.$file_name)) {
 			//delete db field, if any
-			$this->db->delete('product_media', array('image_path' => $file_name));
+			return $this->db->delete('product_media', array('image_path' => $file_name));
+		} else {
+			return false;
 		}
-		exit;
 	}
 
 	//--------------------------------------------------------------------
@@ -341,6 +337,7 @@ class content extends Admin_Controller {
 		$url                                     = ($this->product_model->is_unique('product_url', $url)) ? $url : $url.'-'.rand(1, 99);
 
 		$data                                    = array();
+		$data['product_category_id']             = $category_id;
 		$data['product_sku']                     = $this->input->post('product_sku');
 		$data['product_price']                   = $this->input->post('product_price');
 		$data['product_special_price']           = $this->input->post('product_special_price') ? $this->input->post('product_special_price') : null;
@@ -367,6 +364,7 @@ class content extends Admin_Controller {
 		//images data
 		$imgCount = $this->input->post('images_count');
 		$i = 0;
+		$images = array();
 
 		if(isset($imgCount) && $imgCount > $i) {
 			$image['product_sku'] = $this->input->post('product_sku');
@@ -379,9 +377,12 @@ class content extends Admin_Controller {
 					$image['image_is_small_image'] = $this->input->post('is_small_image_'.$i);
 					$image['image_label'] = $this->input->post('image_label_'.$i);
 
-					$this->product_model->insertImageData($image);
+					$images[] = $image;
 				}
 			}
+
+			//insert images in one batch
+			$result = $this->product_model->insertImageData($images);
 		}
 
 
@@ -396,7 +397,7 @@ class content extends Admin_Controller {
 			$this->routes_model->insert($route);
 
 			//increase category_products_count
-			$this->category_model->update($category_id, array('category_products_count' => 'category_products_count'+1));
+			$this->save_category($category_id);
 
 			if (is_numeric($id))
 			{
@@ -417,6 +418,26 @@ class content extends Admin_Controller {
 
 	//--------------------------------------------------------------------
 
+
+	/*
+		Method: save_category()
+
+		Increases product count for a category
+
+		Parameters:
+			$id		- The ID of the record to update.
+
+		Returns:
+			Returns TRUE on success.
+			Otherwise, returns FALSE.
+	*/
+	private function save_category($id)
+	{
+		if(!$id) return false;
+
+		return $this->db->set('category_products_count', 'category_products_count + 1', FALSE)->where('id', $id)->update('category');
+
+	}
 
 
 }
