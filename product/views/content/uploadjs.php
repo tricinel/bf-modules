@@ -18,7 +18,7 @@
         		cancel_btn.removeClass('disabled').attr('href','#');
         	},
         	afterEach: function(results,id){
-        		appendImageToForm(results.file_name);
+        		if(typeof results === 'object') appendImageToForm(results.file_name);
         	},
         	uploadFinished: function(){
         		console.log('Upload finished');
