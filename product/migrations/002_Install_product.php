@@ -1,13 +1,14 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class Migration_Install_product extends Migration {
-	
-	public function up() 
+
+	public function up()
 	{
 		$prefix = $this->db->dbprefix;
 
 		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
 			$this->dbforge->add_field("`product_sku` VARCHAR(64) NOT NULL");
+			$this->dbforge->add_field("`product_category_id` int(11) NOT NULL");
 			$this->dbforge->add_field("`product_price` DECIMAL(12,4) NOT NULL");
 			$this->dbforge->add_field("`product_special_price` DECIMAL(12,4) NULL");
 			$this->dbforge->add_field("`product_special_price_from_date` DATETIME NULL");
@@ -27,17 +28,17 @@ class Migration_Install_product extends Migration {
 		$this->dbforge->create_table('product');
 
 	}
-	
+
 	//--------------------------------------------------------------------
-	
-	public function down() 
+
+	public function down()
 	{
 		$prefix = $this->db->dbprefix;
 
 		$this->dbforge->drop_table('product');
 
 	}
-	
+
 	//--------------------------------------------------------------------
-	
+
 }
